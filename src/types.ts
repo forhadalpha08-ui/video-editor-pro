@@ -181,6 +181,7 @@ export interface VideoClip {
   cropWidth?: number; // 10 to 100, default 100
   cropHeight?: number; // 10 to 100, default 100
   aspectRatio?: 'free' | '16:9' | '9:16' | '1:1' | '4:3' | '2.39:1';
+  blendMode?: 'normal' | 'screen' | 'multiply' | 'overlay';
 }
 
 export type AudioStyleType = 

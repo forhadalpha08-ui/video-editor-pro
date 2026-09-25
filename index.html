@@ -13,8 +13,21 @@
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
   </head>
-  <body>
-    <div id="root"></div>
+  <body style="margin: 0; background-color: #020306; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; overflow-x: hidden;">
+    <div id="root">
+      <div style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle at center, #070c24 0%, #020306 100%);">
+        <div style="position: relative; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;">
+          <div style="position: absolute; inset: 0; border-radius: 50%; background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc); filter: blur(12px); opacity: 0.6; animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;"></div>
+          <img src="./logo.png" alt="VidoEdit Pro" style="width: 48px; height: 48px; object-fit: contain; position: relative; z-index: 10;" onerror="this.style.display='none'" />
+        </div>
+        <div style="margin-top: 16px; font-weight: 800; font-size: 14px; letter-spacing: 0.5px; color: #ffffff;">
+          VidoEdit<span style="color: #38bdf8;">Pro</span>
+        </div>
+        <div style="margin-top: 6px; font-size: 9px; font-family: monospace; letter-spacing: 2px; color: #64748b; text-transform: uppercase;">
+          Loading Creative Suite...
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

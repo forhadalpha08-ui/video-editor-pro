@@ -17,6 +17,9 @@ interface PreviewPlayerProps {
   onSelectProject?: (id: string) => void;
   mutedTracks?: Record<string, boolean>;
   globalMotionBlur?: boolean;
+  onUpdateClipAspectRatio?: (aspectRatio: '16:9' | '9:16' | '1:1' | '4:3' | '2.39:1' | 'free') => void;
+  onUpdateClipSpeed?: (speed: number) => void;
+  onSplitClip?: () => void;
 }
 
 export default function PreviewPlayer({
@@ -31,7 +34,10 @@ export default function PreviewPlayer({
   globalVolume,
   onSelectProject,
   mutedTracks = { v1: false, a1: false, t1: false },
-  globalMotionBlur = true
+  globalMotionBlur = true,
+  onUpdateClipAspectRatio,
+  onUpdateClipSpeed,
+  onSplitClip,
 }: PreviewPlayerProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -40,6 +46,14 @@ export default function PreviewPlayer({
   const videoCacheRef = useRef<Map<string, HTMLVideoElement>>(new Map());
   const imageCacheRef = useRef<Map<string, HTMLImageElement>>(new Map());
   const lastRenderedCanvasRef = useRef<Map<string, HTMLCanvasElement>>(new Map());
+
+  // Refs to allow 60FPS RAF loop without re-instantiation stutter
+  const currentTimeRef = useRef<number>(currentTime);
+  currentTimeRef.current = currentTime;
+  const isPlayingRef = useRef<boolean>(isPlaying);
+  isPlayingRef.current = isPlaying;
+  const projectRef = useRef<Project>(project);
+  projectRef.current = project;
 
   // 3D Preview Mode: '2d' | '3d_anaglyph' | '3d_cinema' | '3d_globe'
   const [preview3DMode, setPreview3DMode] = useState<'2d' | '3d_anaglyph' | '3d_cinema' | '3d_globe'>('2d');
@@ -142,24 +156,24 @@ export default function PreviewPlayer({
       activeVideo.playbackRate = interpolatedSpeed;
     }
 
-    const localTime = (currentTime - activeClipForSync.startTime) * interpolatedSpeed;
+    const localTime = (currentTime - activeClipForSync.startTime) * (activeClipForSync.speed || 1.0);
 
     if (isPlaying) {
       if (activeVideo.paused) {
         activeVideo.play().catch(() => {});
       }
-      if (Math.abs(activeVideo.currentTime - localTime) > 0.35) {
+      if (Math.abs(activeVideo.currentTime - localTime) > 0.45) {
         activeVideo.currentTime = localTime;
       }
     } else {
       if (!activeVideo.paused) {
         activeVideo.pause();
       }
-      if (Math.abs(activeVideo.currentTime - localTime) > 0.04) {
+      if (Math.abs(activeVideo.currentTime - localTime) > 0.03) {
         activeVideo.currentTime = localTime;
       }
     }
-  }, [activeClipForSync?.id, activeClipForSync?.videoUrl, activeClipForSync?.speed, isPlaying, currentTime, globalVolume, mutedTracks]);
+  }, [activeClipForSync?.id, activeClipForSync?.videoUrl, activeClipForSync?.speed, isPlaying, globalVolume, mutedTracks]);
 
   // Synchronize audio playback with playing state and currentTime changes
   useEffect(() => {
@@ -761,33 +775,69 @@ export default function PreviewPlayer({
     });
   };
 
-  // 60FPS fluid animation runner
+  // 60FPS fluid animation runner synchronized with active video playback
   useEffect(() => {
     const loop = (timestamp: number) => {
-      if (isPlaying) {
-        const delta = (timestamp - lastTimeRef.current) / 1000;
+      if (isPlayingRef.current) {
+        const curProject = projectRef.current;
+        const curTime = currentTimeRef.current;
+        const activeClip = curProject.videoClips.find(
+          (c) => curTime >= c.startTime && curTime < c.startTime + c.duration
+        );
+
+        const activeVideo = activeClip?.videoUrl && !isImageMedia(activeClip.videoUrl)
+          ? videoCacheRef.current.get(activeClip.videoUrl)
+          : null;
+
+        let nextTime = curTime;
+
+        if (activeVideo && !activeVideo.paused && !activeVideo.seeking && activeVideo.readyState >= 2) {
+          const clipSpeed = activeClip.speed || 1.0;
+          nextTime = activeClip.startTime + (activeVideo.currentTime / clipSpeed);
+        } else {
+          const delta = (timestamp - lastTimeRef.current) / 1000;
+          nextTime = curTime + (delta > 0 && delta < 0.1 ? delta : 0.016);
+        }
+
         lastTimeRef.current = timestamp;
 
-        // Advance timeline playhead
-        let nextTime = currentTime + delta;
-        if (nextTime >= project.duration) {
-          nextTime = 0; // Loop or pause at end
+        if (nextTime >= curProject.duration) {
+          nextTime = 0;
           onTogglePlay(false);
         }
+
+        currentTimeRef.current = nextTime;
         onTimeUpdate(nextTime);
+        drawFrame();
       } else {
         lastTimeRef.current = timestamp;
       }
       animationFrameRef.current = requestAnimationFrame(loop);
     };
 
+    lastTimeRef.current = performance.now();
     animationFrameRef.current = requestAnimationFrame(loop);
+
     return () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [isPlaying, currentTime, project.duration]);
+  }, [isPlaying]);
+
+  // When paused and seeking, seek the active video precisely
+  useEffect(() => {
+    if (!isPlaying && activeClipForSync && activeClipForSync.videoUrl && !isImageMedia(activeClipForSync.videoUrl)) {
+      const activeVideo = videoCacheRef.current.get(activeClipForSync.videoUrl);
+      if (activeVideo) {
+        const localTime = (currentTime - activeClipForSync.startTime) * (activeClipForSync.speed || 1.0);
+        if (Math.abs(activeVideo.currentTime - localTime) > 0.02) {
+          activeVideo.currentTime = localTime;
+        }
+      }
+    }
+    drawFrame();
+  }, [currentTime, isPlaying]);
 
   // Handle Swipe/Tap controls
   const handleTouchStart = (e: React.TouchEvent | React.MouseEvent) => {
@@ -942,48 +992,110 @@ export default function PreviewPlayer({
   return (
     <div className="flex flex-col gap-3 bg-slate-900/40 p-4 rounded-2xl border border-slate-800/60 shadow-xl backdrop-blur-md">
       
-      {/* 3D Real-World Space View Mode Selector */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-slate-800/40">
-        <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-400 flex items-center gap-1.5">
-          <Sparkles className="w-3.5 h-3.5 animate-pulse text-indigo-400" />
-          <span>Real-World 3D Space View</span>
-        </span>
-        <div className="flex bg-slate-950 p-0.5 rounded-lg border border-slate-850 shadow-inner flex-wrap gap-0.5">
-          <button
-            onClick={() => setPreview3DMode('2d')}
-            className={`px-2 py-0.5 text-[8.5px] font-bold rounded transition-all cursor-pointer ${
-              preview3DMode === '2d' ? 'bg-indigo-900/40 text-indigo-400 border border-indigo-500/20' : 'text-slate-500 hover:text-slate-300'
-            }`}
-          >
-            2D Flat
-          </button>
-          <button
-            onClick={() => setPreview3DMode('3d_anaglyph')}
-            className={`px-2 py-0.5 text-[8.5px] font-bold rounded transition-all cursor-pointer ${
-              preview3DMode === '3d_anaglyph' ? 'bg-pink-900/40 text-pink-400 border border-pink-500/20' : 'text-slate-500 hover:text-slate-300'
-            }`}
-            title="Real stereoscopic 3D red-cyan channel shift"
-          >
-            3D Glasses (Anaglyph)
-          </button>
-          <button
-            onClick={() => setPreview3DMode('3d_cinema')}
-            className={`px-2 py-0.5 text-[8.5px] font-bold rounded transition-all cursor-pointer ${
-              preview3DMode === '3d_cinema' ? 'bg-emerald-900/40 text-emerald-400 border border-emerald-500/20' : 'text-slate-500 hover:text-slate-300'
-            }`}
-            title="Rotating 3D cinema screen (drag canvas to rotate!)"
-          >
-            3D Cinema Room
-          </button>
-          <button
-            onClick={() => setPreview3DMode('3d_globe')}
-            className={`px-2 py-0.5 text-[8.5px] font-bold rounded transition-all cursor-pointer ${
-              preview3DMode === '3d_globe' ? 'bg-cyan-900/40 text-cyan-400 border border-cyan-500/20' : 'text-slate-500 hover:text-slate-300'
-            }`}
-            title="Interactive 3D travel globe (drag globe to spin and select pins!)"
-          >
-            3D Travel Globe
-          </button>
+      {/* CapCut Pro Edit & View Mode Toolbar */}
+      <div className="flex flex-col gap-2 pb-2.5 border-b border-slate-800/40">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          {/* Aspect Ratio Selector (CapCut style) */}
+          <div className="flex items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-850 shadow-inner">
+            <span className="text-[9px] font-extrabold uppercase tracking-wider text-slate-500 pl-1">Ratio:</span>
+            {(['16:9', '9:16', '1:1', '4:3', '2.39:1'] as const).map((ratio) => {
+              const activeRatio = activeClipForSync?.aspectRatio || 'free';
+              const isSelected = activeRatio === ratio;
+              return (
+                <button
+                  key={ratio}
+                  onClick={() => onUpdateClipAspectRatio && onUpdateClipAspectRatio(ratio)}
+                  className={`px-2 py-0.5 text-[8.5px] font-bold rounded-lg transition-all cursor-pointer ${
+                    isSelected
+                      ? 'bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/30'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-900'
+                  }`}
+                  title={`Set Aspect Ratio to ${ratio}`}
+                >
+                  {ratio}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Quick Speed Controls (CapCut style) */}
+          <div className="flex items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-850 shadow-inner">
+            <span className="text-[9px] font-extrabold uppercase tracking-wider text-slate-500 pl-1">Speed:</span>
+            {[0.5, 1.0, 1.5, 2.0, 4.0].map((spd) => {
+              const currentSpeed = activeClipForSync?.speed || 1.0;
+              const isSelected = Math.abs(currentSpeed - spd) < 0.05;
+              return (
+                <button
+                  key={spd}
+                  onClick={() => onUpdateClipSpeed && onUpdateClipSpeed(spd)}
+                  className={`px-2 py-0.5 text-[8.5px] font-bold rounded-lg transition-all cursor-pointer ${
+                    isSelected
+                      ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-900'
+                  }`}
+                  title={`Set Speed to ${spd}x`}
+                >
+                  {spd}x
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Quick Split Button */}
+          {onSplitClip && (
+            <button
+              onClick={onSplitClip}
+              className="flex items-center gap-1 px-2.5 py-1 bg-indigo-950/60 hover:bg-indigo-900 border border-indigo-700/50 hover:border-indigo-400 text-indigo-300 hover:text-white text-[9px] font-extrabold rounded-xl transition-all cursor-pointer active:scale-95 shadow-sm"
+              title="Split active clip at playhead (Ctrl+B / S)"
+            >
+              <span>✂️ Split</span>
+            </button>
+          )}
+        </div>
+
+        {/* 3D Real-World Space View Mode Selector */}
+        <div className="flex flex-wrap items-center justify-between gap-1.5 pt-1">
+          <span className="text-[9.5px] font-extrabold uppercase tracking-widest text-indigo-400 flex items-center gap-1.5">
+            <Sparkles className="w-3 h-3 animate-pulse text-indigo-400" />
+            <span>3D View Mode</span>
+          </span>
+          <div className="flex bg-slate-950 p-0.5 rounded-lg border border-slate-850 shadow-inner flex-wrap gap-0.5">
+            <button
+              onClick={() => setPreview3DMode('2d')}
+              className={`px-2 py-0.5 text-[8.5px] font-bold rounded transition-all cursor-pointer ${
+                preview3DMode === '2d' ? 'bg-indigo-900/40 text-indigo-400 border border-indigo-500/20' : 'text-slate-500 hover:text-slate-300'
+              }`}
+            >
+              2D Flat
+            </button>
+            <button
+              onClick={() => setPreview3DMode('3d_anaglyph')}
+              className={`px-2 py-0.5 text-[8.5px] font-bold rounded transition-all cursor-pointer ${
+                preview3DMode === '3d_anaglyph' ? 'bg-pink-900/40 text-pink-400 border border-pink-500/20' : 'text-slate-500 hover:text-slate-300'
+              }`}
+              title="Real stereoscopic 3D red-cyan channel shift"
+            >
+              3D Glasses
+            </button>
+            <button
+              onClick={() => setPreview3DMode('3d_cinema')}
+              className={`px-2 py-0.5 text-[8.5px] font-bold rounded transition-all cursor-pointer ${
+                preview3DMode === '3d_cinema' ? 'bg-emerald-900/40 text-emerald-400 border border-emerald-500/20' : 'text-slate-500 hover:text-slate-300'
+              }`}
+              title="Rotating 3D cinema screen"
+            >
+              3D Cinema
+            </button>
+            <button
+              onClick={() => setPreview3DMode('3d_globe')}
+              className={`px-2 py-0.5 text-[8.5px] font-bold rounded transition-all cursor-pointer ${
+                preview3DMode === '3d_globe' ? 'bg-cyan-900/40 text-cyan-400 border border-cyan-500/20' : 'text-slate-500 hover:text-slate-300'
+              }`}
+              title="Interactive 3D travel globe"
+            >
+              3D Globe
+            </button>
+          </div>
         </div>
       </div>
       

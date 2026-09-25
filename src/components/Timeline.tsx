@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Scissors, Trash, Trash2, Plus, Copy, ZoomIn, ZoomOut, MoveRight, Layers, FileText, Music, Lock, Unlock, VolumeX, Volume2, Eye, EyeOff } from 'lucide-react';
+import { Scissors, Trash, Trash2, Plus, Copy, ZoomIn, ZoomOut, MoveRight, Layers, FileText, Music, Lock, Unlock, VolumeX, Volume2, Eye, EyeOff, Undo2, Redo2 } from 'lucide-react';
 import { Project, VideoClip, AudioClip, TextClip, TrackId, TimelineMarker } from '../types';
 
 interface TimelineProps {
@@ -17,6 +17,10 @@ interface TimelineProps {
   onSplitClip: () => void;
   onDeleteClip: () => void;
   onDuplicateClip: () => void;
+  onUndo?: () => void;
+  onRedo?: () => void;
+  canUndo?: boolean;
+  canRedo?: boolean;
   
   // Track mute / lock states
   mutedTracks: Record<TrackId, boolean>;
@@ -95,6 +99,10 @@ export default function Timeline({
   onSplitClip,
   onDeleteClip,
   onDuplicateClip,
+  onUndo,
+  onRedo,
+  canUndo = false,
+  canRedo = false,
   mutedTracks,
   lockedTracks,
   onToggleMuteTrack,
@@ -807,14 +815,40 @@ export default function Timeline({
         </div>
       )}
 
-      {/* Dynamic Action Bar (Cut, Delete, Duplicate) */}
+      {/* Dynamic Action Bar (Undo, Redo, Cut, Delete, Duplicate) */}
       <div className="flex items-center justify-between border-b border-slate-800/60 pb-3">
         <div className="flex items-center gap-1.5 p-1 bg-slate-950/60 rounded-xl border border-slate-800/50 relative">
+          {onUndo && (
+            <button
+              onClick={onUndo}
+              disabled={!canUndo}
+              className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/40 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+              title="Undo (Ctrl+Z)"
+            >
+              <Undo2 className="w-3.5 h-3.5 text-cyan-400" />
+              <span className="hidden sm:inline text-[11px]">Undo</span>
+            </button>
+          )}
+
+          {onRedo && (
+            <button
+              onClick={onRedo}
+              disabled={!canRedo}
+              className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/40 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+              title="Redo (Ctrl+Y / Ctrl+Shift+Z)"
+            >
+              <Redo2 className="w-3.5 h-3.5 text-cyan-400" />
+              <span className="hidden sm:inline text-[11px]">Redo</span>
+            </button>
+          )}
+
+          {(onUndo || onRedo) && <div className="w-[1px] h-5 bg-slate-800 self-center mx-0.5" />}
+
           <button
             onClick={safeSplit}
             disabled={!selectedClipId}
             className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/40 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-            title="Split selected clip at playhead"
+            title="Split selected clip at playhead (Ctrl+B / S)"
           >
             <Scissors className="w-3.5 h-3.5 text-indigo-400" />
             <span>Split</span>

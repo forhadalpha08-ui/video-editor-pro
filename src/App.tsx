@@ -123,8 +123,34 @@ export default function App() {
 
   const activeClipDetails = getSelectedClipDetails();
 
+  // History undo / redo stacks for professional editing workflow
+  const [historyStack, setHistoryStack] = useState<Project[]>([]);
+  const [redoStack, setRedoStack] = useState<Project[]>([]);
+
+  const pushHistorySnapshot = (prevProject: Project) => {
+    setHistoryStack((prev) => [...prev.slice(-40), JSON.parse(JSON.stringify(prevProject))]);
+    setRedoStack([]);
+  };
+
+  const handleUndo = () => {
+    if (historyStack.length === 0) return;
+    const previous = historyStack[historyStack.length - 1];
+    setRedoStack((prev) => [...prev, JSON.parse(JSON.stringify(project))]);
+    setHistoryStack((prev) => prev.slice(0, -1));
+    setProjects((prev) => prev.map((p) => (p.id === previous.id ? previous : p)));
+  };
+
+  const handleRedo = () => {
+    if (redoStack.length === 0) return;
+    const next = redoStack[redoStack.length - 1];
+    setHistoryStack((prev) => [...prev, JSON.parse(JSON.stringify(project))]);
+    setRedoStack((prev) => prev.slice(0, -1));
+    setProjects((prev) => prev.map((p) => (p.id === next.id ? next : p)));
+  };
+
   // Multi-track setters
   const updateVideoClips = (updated: VideoClip[]) => {
+    pushHistorySnapshot(project);
     const updatedProjects = projects.map((p) =>
       p.id === project.id ? { ...p, videoClips: updated } : p
     );
@@ -132,6 +158,7 @@ export default function App() {
   };
 
   const updateAudioClips = (updated: AudioClip[]) => {
+    pushHistorySnapshot(project);
     const updatedProjects = projects.map((p) =>
       p.id === project.id ? { ...p, audioClips: updated } : p
     );
@@ -139,6 +166,7 @@ export default function App() {
   };
 
   const updateTextClips = (updated: TextClip[]) => {
+    pushHistorySnapshot(project);
     const updatedProjects = projects.map((p) =>
       p.id === project.id ? { ...p, textClips: updated } : p
     );
@@ -150,6 +178,42 @@ export default function App() {
       p.id === project.id ? { ...p, markers: updatedMarkers } : p
     );
     setProjects(updatedProjects);
+  };
+
+  // One-click Aspect Ratio changer on active video clip
+  const handleUpdateClipAspectRatio = (aspectRatio: '16:9' | '9:16' | '1:1' | '4:3' | '2.39:1' | 'free') => {
+    if (selectedClip && selectedClip.type === 'video') {
+      const updated = project.videoClips.map((c) =>
+        c.id === selectedClip.id ? { ...c, aspectRatio } : c
+      );
+      updateVideoClips(updated);
+    } else if (project.videoClips.length > 0) {
+      const activeClip = project.videoClips.find(
+        (c) => currentTime >= c.startTime && currentTime < c.startTime + c.duration
+      ) || project.videoClips[0];
+      const updated = project.videoClips.map((c) =>
+        c.id === activeClip.id ? { ...c, aspectRatio } : c
+      );
+      updateVideoClips(updated);
+    }
+  };
+
+  // One-click Speed changer on active video clip
+  const handleUpdateClipSpeed = (speed: number) => {
+    if (selectedClip && selectedClip.type === 'video') {
+      const updated = project.videoClips.map((c) =>
+        c.id === selectedClip.id ? { ...c, speed } : c
+      );
+      updateVideoClips(updated);
+    } else if (project.videoClips.length > 0) {
+      const activeClip = project.videoClips.find(
+        (c) => currentTime >= c.startTime && currentTime < c.startTime + c.duration
+      ) || project.videoClips[0];
+      const updated = project.videoClips.map((c) =>
+        c.id === activeClip.id ? { ...c, speed } : c
+      );
+      updateVideoClips(updated);
+    }
   };
 
   // Add caption text overlay at playhead
@@ -220,10 +284,9 @@ export default function App() {
     };
 
     const updatedVideo = [...project.videoClips, newVideo].sort((a, b) => a.startTime - b.startTime);
-    
-    // Update total project duration if clip exceeds boundaries
     const maxEnd = Math.max(...updatedVideo.map((c) => c.startTime + c.duration), project.duration);
     
+    pushHistorySnapshot(project);
     const updatedProjects = projects.map((p) =>
       p.id === project.id
         ? { ...p, videoClips: updatedVideo, duration: Math.round(maxEnd) }
@@ -250,6 +313,7 @@ export default function App() {
       toClipId,
     };
 
+    pushHistorySnapshot(project);
     const updatedProjects = projects.map((p) =>
       p.id === project.id ? { ...p, transitions: [...p.transitions, newTrans] } : p
     );
@@ -257,15 +321,29 @@ export default function App() {
     setActiveTransitionId(newTrans.id);
   };
 
-  // Split/Cut selected clip at playhead
+  // Split/Cut selected clip at playhead (CapCut smart split)
   const handleSplitClip = () => {
-    if (!selectedClip) return;
+    let targetClip = selectedClip;
+    if (!targetClip) {
+      const activeVid = project.videoClips.find(
+        (c) => currentTime > c.startTime && currentTime < c.startTime + c.duration
+      );
+      if (activeVid) {
+        targetClip = { id: activeVid.id, type: 'video' };
+      } else {
+        const activeAud = project.audioClips.find(
+          (c) => currentTime > c.startTime && currentTime < c.startTime + c.duration
+        );
+        if (activeAud) targetClip = { id: activeAud.id, type: 'audio' };
+      }
+    }
 
-    if (selectedClip.type === 'video') {
-      const clip = project.videoClips.find((c) => c.id === selectedClip.id);
+    if (!targetClip) return;
+
+    if (targetClip.type === 'video') {
+      const clip = project.videoClips.find((c) => c.id === targetClip.id);
       if (!clip) return;
 
-      // Ensure playhead is inside clip bounds
       if (currentTime > clip.startTime && currentTime < clip.startTime + clip.duration) {
         const firstPartDuration = currentTime - clip.startTime;
         const secondPartDuration = clip.duration - firstPartDuration;
@@ -281,6 +359,7 @@ export default function App() {
           name: `${clip.name} (Part 2)`,
           startTime: currentTime,
           duration: secondPartDuration,
+          sourceStart: (clip.sourceStart || 0) + (firstPartDuration * (clip.speed || 1.0)),
         };
 
         const filtered = project.videoClips.filter((c) => c.id !== clip.id);
@@ -288,8 +367,8 @@ export default function App() {
         updateVideoClips(updated);
         setSelectedClip({ id: secondPart.id, type: 'video' });
       }
-    } else if (selectedClip.type === 'audio') {
-      const clip = project.audioClips.find((c) => c.id === selectedClip.id);
+    } else if (targetClip.type === 'audio') {
+      const clip = project.audioClips.find((c) => c.id === targetClip.id);
       if (!clip) return;
 
       if (currentTime > clip.startTime && currentTime < clip.startTime + clip.duration) {
@@ -312,6 +391,30 @@ export default function App() {
         const updated = [...filtered, firstPart, secondPart].sort((a, b) => a.startTime - b.startTime);
         updateAudioClips(updated);
         setSelectedClip({ id: secondPart.id, type: 'audio' });
+      }
+    } else if (targetClip.type === 'text') {
+      const clip = project.textClips.find((c) => c.id === targetClip.id);
+      if (!clip) return;
+
+      if (currentTime > clip.startTime && currentTime < clip.startTime + clip.duration) {
+        const firstPartDuration = currentTime - clip.startTime;
+        const secondPartDuration = clip.duration - firstPartDuration;
+
+        const firstPart: TextClip = {
+          ...clip,
+          duration: firstPartDuration,
+        };
+
+        const secondPart: TextClip = {
+          ...clip,
+          id: `t_clip_split_${Date.now()}`,
+          startTime: currentTime,
+          duration: secondPartDuration,
+        };
+
+        const filtered = project.textClips.filter((c) => c.id !== clip.id);
+        updateTextClips([...filtered, firstPart, secondPart]);
+        setSelectedClip({ id: secondPart.id, type: 'text' });
       }
     }
   };
@@ -361,6 +464,62 @@ export default function App() {
 
     setSelectedClip(null);
   };
+
+  // CapCut Pro Global Keyboard Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore shortcut if user is typing in an input or textarea
+      const target = e.target as HTMLElement;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
+        return;
+      }
+
+      if (e.code === 'Space') {
+        e.preventDefault();
+        setIsPlaying((prev) => !prev);
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        handleUndo();
+      } else if ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'y' || (e.shiftKey && e.key.toLowerCase() === 'z'))) {
+        e.preventDefault();
+        handleRedo();
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
+        e.preventDefault();
+        handleSplitClip();
+      } else if (e.key.toLowerCase() === 's' && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        handleSplitClip();
+      } else if (e.key === 'Delete' || e.key === 'Backspace') {
+        if (selectedClip) {
+          e.preventDefault();
+          handleDeleteClip();
+        }
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'd') {
+        e.preventDefault();
+        handleDuplicateClip();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        const step = e.shiftKey ? 1.0 : 0.05;
+        setCurrentTime((prev) => Math.max(0, parseFloat((prev - step).toFixed(2))));
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        const step = e.shiftKey ? 1.0 : 0.05;
+        setCurrentTime((prev) => Math.min(project.duration, parseFloat((prev + step).toFixed(2))));
+      } else if (e.key.toLowerCase() === 'j') {
+        e.preventDefault();
+        setCurrentTime((prev) => Math.max(0, prev - 1.5));
+      } else if (e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsPlaying((prev) => !prev);
+      } else if (e.key.toLowerCase() === 'l') {
+        e.preventDefault();
+        setCurrentTime((prev) => Math.min(project.duration, prev + 1.5));
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedClip, project, historyStack, redoStack]);
 
   // Handle user uploaded video or image file for custom editing and downloading
   const handleUploadVideoFile = (file: File) => {
@@ -1001,6 +1160,9 @@ export default function App() {
                       onSelectProject={handleSelectTemplate}
                       mutedTracks={mutedTracks}
                       globalMotionBlur={globalMotionBlur}
+                      onUpdateClipAspectRatio={handleUpdateClipAspectRatio}
+                      onUpdateClipSpeed={handleUpdateClipSpeed}
+                      onSplitClip={handleSplitClip}
                     />
 
                     {/* Quick actions for adding tracks overlayed on Canvas */}
@@ -1307,6 +1469,10 @@ export default function App() {
                     onSplitClip={handleSplitClip}
                     onDeleteClip={handleDeleteClip}
                     onDuplicateClip={handleDuplicateClip}
+                    onUndo={handleUndo}
+                    onRedo={handleRedo}
+                    canUndo={historyStack.length > 0}
+                    canRedo={redoStack.length > 0}
                     mutedTracks={mutedTracks}
                     lockedTracks={lockedTracks}
                     onToggleMuteTrack={handleToggleMuteTrack}

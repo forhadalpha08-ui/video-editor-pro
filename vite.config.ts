@@ -10,7 +10,7 @@ export default defineConfig({
     port: 3000,
     host: '0.0.0.0',
     watch: {
-      ignored: ['**/agent/**', '**/node_modules/**'],
+      ignored: ['**/agent/**', '**/node_modules/**', '**/*.zip', '**/.git/**'],
     },
   },
 });

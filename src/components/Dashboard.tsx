@@ -46,40 +46,92 @@ interface DashboardProps {
   onOpenProfileModal?: () => void;
 }
 
-// Interactive Video Thumbnail Component that plays real video on hover
-function VideoThumb({ videoFile, className }: { videoFile: string; className?: string }) {
+// Interactive Video Thumbnail Component that instantly renders and loops smoothly
+function VideoThumb({ 
+  videoFile, 
+  className,
+  autoPlay = true
+}: { 
+  videoFile: string; 
+  className?: string;
+  autoPlay?: boolean;
+}) {
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const src = getAssetUrl(videoFile);
+  const [isLoaded, setIsLoaded] = React.useState(false);
+
+  React.useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const attemptPlay = () => {
+      setIsLoaded(true);
+      if (autoPlay) {
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(() => {
+            // If autoplay is restricted, seek to first frame so thumbnail is visible
+            if (video.currentTime === 0) {
+              video.currentTime = 0.001;
+            }
+          });
+        }
+      } else if (video.currentTime === 0) {
+        video.currentTime = 0.001;
+      }
+    };
+
+    if (video.readyState >= 2) {
+      attemptPlay();
+    } else {
+      video.addEventListener('loadeddata', attemptPlay, { once: true });
+      video.addEventListener('canplay', attemptPlay, { once: true });
+    }
+
+    return () => {
+      video.removeEventListener('loadeddata', attemptPlay);
+      video.removeEventListener('canplay', attemptPlay);
+    };
+  }, [src, autoPlay]);
 
   return (
-    <video
-      ref={videoRef}
-      src={src}
-      muted
-      playsInline
-      preload="auto"
-      loop
-      onLoadedMetadata={() => {
-        if (videoRef.current && videoRef.current.currentTime === 0) {
-          videoRef.current.currentTime = 0.001;
-        }
-      }}
-      onLoadedData={() => {
-        if (videoRef.current && videoRef.current.currentTime === 0) {
-          videoRef.current.currentTime = 0.001;
-        }
-      }}
-      onMouseEnter={() => {
-        videoRef.current?.play().catch(() => {});
-      }}
-      onMouseLeave={() => {
-        if (videoRef.current) {
-          videoRef.current.pause();
-          videoRef.current.currentTime = 0.001;
-        }
-      }}
-      className={className || "w-full h-full object-cover"}
-    />
+    <div className={`relative w-full h-full overflow-hidden bg-[#070b1d] ${className || ''}`}>
+      {/* Radiant cosmic placeholder glow before video frame is ready */}
+      {!isLoaded && (
+        <div className="absolute inset-0 bg-gradient-to-tr from-indigo-950/80 via-purple-900/30 to-slate-900 animate-pulse flex items-center justify-center">
+          <div className="w-5 h-5 rounded-full border border-indigo-400/40 border-t-indigo-400 animate-spin" />
+        </div>
+      )}
+      <video
+        ref={videoRef}
+        src={src}
+        muted
+        playsInline
+        preload="auto"
+        loop
+        autoPlay={autoPlay}
+        onLoadedMetadata={(e) => {
+          setIsLoaded(true);
+          if (autoPlay) {
+            e.currentTarget.play().catch(() => {
+              e.currentTarget.currentTime = 0.001;
+            });
+          } else {
+            e.currentTarget.currentTime = 0.001;
+          }
+        }}
+        onMouseEnter={() => {
+          videoRef.current?.play().catch(() => {});
+        }}
+        onMouseLeave={() => {
+          if (!autoPlay && videoRef.current) {
+            videoRef.current.pause();
+            videoRef.current.currentTime = 0.001;
+          }
+        }}
+        className={`w-full h-full object-cover transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+      />
+    </div>
   );
 }
 
@@ -420,7 +472,7 @@ export default function Dashboard({
         </div>
 
         {/* Right Hero Video Card with Real Video Playback */}
-        <div className="relative w-full lg:w-[460px] aspect-[16/10] rounded-2xl overflow-hidden border border-indigo-500/30 shadow-2xl shadow-indigo-600/20 group">
+        <div className="relative w-full lg:w-[460px] aspect-[16/10] rounded-2xl overflow-hidden border border-indigo-500/30 shadow-2xl shadow-indigo-600/20 group bg-[#070b1d]">
           {/* Main Background Video Preview */}
           <video
             src={getAssetUrl('1.mp4')}
@@ -429,6 +481,12 @@ export default function Dashboard({
             muted
             playsInline
             preload="auto"
+            onLoadedMetadata={(e) => {
+              e.currentTarget.play().catch(() => {});
+            }}
+            onCanPlay={(e) => {
+              e.currentTarget.play().catch(() => {});
+            }}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />

@@ -17,10 +17,10 @@ export function preloadCoreMedia() {
     img.src = getAssetUrl(imgName);
   });
 
-  // 2. Preload first tier video files immediately for instant video display
+  // 2. Preload primary video files immediately for instant video display
   primaryVideos.forEach((vidName, idx) => {
-    // Stagger slightly after first 3 to prevent network congestion while keeping initial playback instant
-    const delay = idx < 3 ? 0 : idx * 120;
+    // Zero delay for top 6 home page videos, slight stagger for remainder
+    const delay = idx < 6 ? 0 : (idx - 5) * 100;
     setTimeout(() => {
       try {
         const v = document.createElement('video');
@@ -31,7 +31,7 @@ export function preloadCoreMedia() {
         v.src = getAssetUrl(vidName);
         v.addEventListener('loadeddata', () => {
           if (v.currentTime === 0) {
-            v.currentTime = 0.001; // Forces initial video frame decode
+            v.currentTime = 0.001; // Forces initial video frame decode immediately
           }
         }, { once: true });
         v.load();

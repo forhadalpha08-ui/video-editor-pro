@@ -764,7 +764,7 @@ export default function App() {
                 </button>
               </div>
 
-              {/* Navigation Links match desktop */}
+              {/* Navigation Links match desktop mockup */}
               <nav className="flex flex-col gap-1.5 mt-2">
                 <button
                   onClick={() => {
@@ -784,10 +784,11 @@ export default function App() {
                 <button
                   onClick={() => {
                     setActiveSidebarTab('editor');
+                    setActiveWorkspaceTab('capcut');
                     setIsMobileMenuOpen(false);
                   }}
                   className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-bold rounded-2xl cursor-pointer transition-all ${
-                    activeSidebarTab === 'editor' && activeWorkspaceTab === 'inspector'
+                    activeSidebarTab === 'editor' && activeWorkspaceTab === 'capcut'
                       ? 'btn-sidebar-active'
                       : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
                   }`}
@@ -813,22 +814,6 @@ export default function App() {
                 <button
                   onClick={() => {
                     setActiveSidebarTab('editor');
-                    setActiveWorkspaceTab('capcut');
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer transition-all ${
-                    activeSidebarTab === 'editor' && activeWorkspaceTab === 'capcut'
-                      ? 'btn-sidebar-active'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
-                  }`}
-                >
-                  <Wand2 className="w-4 h-4 text-cyan-400" />
-                  <span>CapCut Studio</span>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setActiveSidebarTab('editor');
                     setActiveWorkspaceTab('ai_magic');
                     setIsMobileMenuOpen(false);
                   }}
@@ -839,71 +824,7 @@ export default function App() {
                   }`}
                 >
                   <Sparkles className="w-4 h-4 text-pink-400" />
-                  <span>AI Magic Studio</span>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setActiveSidebarTab('editor');
-                    setActiveWorkspaceTab('audio');
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer transition-all ${
-                    activeSidebarTab === 'editor' && activeWorkspaceTab === 'audio'
-                      ? 'btn-sidebar-active'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
-                  }`}
-                >
-                  <Music className="w-4 h-4 text-cyan-400" />
-                  <span>Pro Audio & EQ</span>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setActiveSidebarTab('editor');
-                    setActiveWorkspaceTab('grading');
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer transition-all ${
-                    activeSidebarTab === 'editor' && activeWorkspaceTab === 'grading'
-                      ? 'btn-sidebar-active'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
-                  }`}
-                >
-                  <Sliders className="w-4 h-4 text-yellow-400" />
-                  <span>Color Grading</span>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setActiveSidebarTab('editor');
-                    setActiveWorkspaceTab('motion');
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer transition-all ${
-                    activeSidebarTab === 'editor' && activeWorkspaceTab === 'motion'
-                      ? 'btn-sidebar-active'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
-                  }`}
-                >
-                  <Move className="w-4 h-4 text-purple-400" />
-                  <span>Motion & PiP</span>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setActiveSidebarTab('editor');
-                    setActiveWorkspaceTab('scopes');
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer transition-all ${
-                    activeSidebarTab === 'editor' && activeWorkspaceTab === 'scopes'
-                      ? 'btn-sidebar-active'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
-                  }`}
-                >
-                  <Activity className="w-4 h-4 text-emerald-400" />
-                  <span>Scopes Monitor</span>
+                  <span>AI Tools</span>
                 </button>
 
                 <button
@@ -912,7 +833,11 @@ export default function App() {
                     setActiveWorkspaceTab('inspector');
                     setIsMobileMenuOpen(false);
                   }}
-                  className="flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900/30 transition-all"
+                  className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer transition-all ${
+                    activeSidebarTab === 'editor' && activeWorkspaceTab === 'inspector'
+                      ? 'btn-sidebar-active'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
+                  }`}
                 >
                   <Film className="w-4 h-4" />
                   <span>Media Library</span>
@@ -936,7 +861,7 @@ export default function App() {
                   }}
                   className="flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900/30 transition-all"
                 >
-                  <History className="w-4 h-4" />
+                  <Download className="w-4 h-4" />
                   <span>Export History</span>
                 </button>
 
@@ -1034,10 +959,10 @@ export default function App() {
             <button
               onClick={() => {
                 setActiveSidebarTab('editor');
-                setActiveWorkspaceTab('inspector');
+                setActiveWorkspaceTab('capcut');
               }}
               className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-bold rounded-2xl cursor-pointer transition-all ${
-                activeSidebarTab === 'editor' && activeWorkspaceTab === 'inspector'
+                activeSidebarTab === 'editor' && activeWorkspaceTab === 'capcut'
                   ? 'btn-sidebar-active'
                   : 'text-slate-400 hover:text-white hover:bg-slate-900/40'
               }`}
@@ -1062,21 +987,6 @@ export default function App() {
             <button
               onClick={() => {
                 setActiveSidebarTab('editor');
-                setActiveWorkspaceTab('capcut');
-              }}
-              className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer transition-all ${
-                activeSidebarTab === 'editor' && activeWorkspaceTab === 'capcut'
-                  ? 'btn-sidebar-active'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900/40'
-              }`}
-            >
-              <Wand2 className="w-4 h-4 text-cyan-400" />
-              <span>CapCut Studio</span>
-            </button>
-
-            <button
-              onClick={() => {
-                setActiveSidebarTab('editor');
                 setActiveWorkspaceTab('ai_magic');
               }}
               className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer transition-all ${
@@ -1086,67 +996,22 @@ export default function App() {
               }`}
             >
               <Sparkles className="w-4 h-4 text-pink-400" />
-              <span>AI Magic Studio</span>
+              <span>AI Tools</span>
             </button>
 
             <button
               onClick={() => {
                 setActiveSidebarTab('editor');
-                setActiveWorkspaceTab('audio');
+                setActiveWorkspaceTab('inspector');
               }}
               className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer transition-all ${
-                activeSidebarTab === 'editor' && activeWorkspaceTab === 'audio'
+                activeSidebarTab === 'editor' && activeWorkspaceTab === 'inspector'
                   ? 'btn-sidebar-active'
                   : 'text-slate-400 hover:text-white hover:bg-slate-900/40'
               }`}
             >
-              <Music className="w-4 h-4 text-cyan-400" />
-              <span>Pro Audio & EQ</span>
-            </button>
-
-            <button
-              onClick={() => {
-                setActiveSidebarTab('editor');
-                setActiveWorkspaceTab('grading');
-              }}
-              className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer transition-all ${
-                activeSidebarTab === 'editor' && activeWorkspaceTab === 'grading'
-                  ? 'btn-sidebar-active'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900/40'
-              }`}
-            >
-              <Sliders className="w-4 h-4 text-yellow-400" />
-              <span>Color Grading</span>
-            </button>
-
-            <button
-              onClick={() => {
-                setActiveSidebarTab('editor');
-                setActiveWorkspaceTab('motion');
-              }}
-              className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer transition-all ${
-                activeSidebarTab === 'editor' && activeWorkspaceTab === 'motion'
-                  ? 'btn-sidebar-active'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900/40'
-              }`}
-            >
-              <Move className="w-4 h-4 text-purple-400" />
-              <span>Motion & PiP</span>
-            </button>
-
-            <button
-              onClick={() => {
-                setActiveSidebarTab('editor');
-                setActiveWorkspaceTab('scopes');
-              }}
-              className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer transition-all ${
-                activeSidebarTab === 'editor' && activeWorkspaceTab === 'scopes'
-                  ? 'btn-sidebar-active'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900/40'
-              }`}
-            >
-              <Activity className="w-4 h-4 text-emerald-400" />
-              <span>Scopes Monitor</span>
+              <Film className="w-4 h-4" />
+              <span>Media Library</span>
             </button>
 
             <button 
@@ -1161,7 +1026,7 @@ export default function App() {
               onClick={() => setShowExportModal(true)}
               className="flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900/40 transition-all"
             >
-              <History className="w-4 h-4" />
+              <Download className="w-4 h-4" />
               <span>Export History</span>
             </button>
 

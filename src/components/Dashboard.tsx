@@ -39,7 +39,7 @@ interface DashboardProps {
   projects: Project[];
   activeProjectId: string;
   onSelectProject: (id: string) => void;
-  onLaunchEditor: (tab?: 'grading' | 'inspector' | 'ai_magic' | 'audio' | 'motion' | 'scopes' | 'tutorials') => void;
+  onLaunchEditor: (tab?: 'grading' | 'inspector' | 'ai_magic' | 'audio' | 'motion' | 'scopes' | 'tutorials' | 'capcut') => void;
   onAddVideoClip: (type: ProceduralType) => void;
   onUploadVideoFile?: (file: File) => void;
   onOpenInstallModal?: () => void;
@@ -161,8 +161,8 @@ const CATEGORY_CARDS = [
     category: 'Cinematic',
     name: 'Cinematic',
     count: '12 templates',
-    templateId: 'template_1',
-    videoFile: '1.mp4'
+    templateId: 'template_2',
+    videoFile: '2.mp4'
   },
   {
     category: 'Gaming',
@@ -175,8 +175,8 @@ const CATEGORY_CARDS = [
     category: 'Vlog',
     name: 'Vlog',
     count: '15 templates',
-    templateId: 'template_2',
-    videoFile: '2.mp4'
+    templateId: 'template_5',
+    videoFile: '5.mp4'
   },
   {
     category: 'Lifestyle',
@@ -354,10 +354,15 @@ export default function Dashboard({
             <ChevronDown className="w-3 h-3 text-slate-500" />
           </button>
 
-          {/* Glowing Notification bell */}
-          <button className="relative p-2.5 bg-[#050711]/90 hover:bg-[#090d1f] border border-slate-850 rounded-full text-slate-400 hover:text-white transition-all cursor-pointer">
+          {/* Glowing Notification bell with badge 1 matching mockup */}
+          <button 
+            onClick={() => onOpenProfileModal && onOpenProfileModal()}
+            className="relative p-2.5 bg-[#050711]/90 hover:bg-[#090d1f] border border-slate-850 rounded-full text-slate-400 hover:text-white transition-all cursor-pointer"
+          >
             <Bell className="w-4 h-4" />
-            <span className="absolute top-2 right-2 w-2 h-2 bg-pink-500 rounded-full ring-2 ring-[#050711] animate-pulse" />
+            <span className="absolute top-1 right-1 w-3.5 h-3.5 bg-[#ff2a6d] text-white text-[8.5px] font-bold rounded-full flex items-center justify-center ring-2 ring-[#050711]">
+              1
+            </span>
           </button>
 
           {/* User profile avatar with circular neon halo ring */}
@@ -375,16 +380,6 @@ export default function Dashboard({
               }}
             />
           </button>
-
-          {/* Install App / GitHub Download Button */}
-          <button
-            onClick={() => onOpenInstallModal && onOpenInstallModal()}
-            className="flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold text-xs rounded-full shadow-lg shadow-indigo-600/30 active:scale-95 transition-all cursor-pointer"
-          >
-            <Download className="w-3.5 h-3.5" />
-            <span>Install App</span>
-          </button>
-
         </div>
       </div>
 
@@ -531,8 +526,8 @@ export default function Dashboard({
             </div>
             <div className="flex items-end justify-between gap-1 mt-3">
               <div className="min-w-0">
-                <span className="text-[11.5px] font-bold text-white block">AI Auto Studio</span>
-                <span className="text-[9px] text-slate-400 block leading-normal mt-0.5">Captions & TTS voice</span>
+                <span className="text-[11.5px] font-bold text-white block">AI Auto Edit</span>
+                <span className="text-[9px] text-slate-400 block leading-normal mt-0.5">Edit videos with AI</span>
               </div>
               <div className="w-6 h-6 rounded-full bg-purple-950/80 group-hover:bg-purple-600 group-hover:text-white border border-purple-500/40 flex items-center justify-center text-purple-300 shrink-0 transition-all shadow-md">
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -551,7 +546,7 @@ export default function Dashboard({
             <div className="flex items-end justify-between gap-1 mt-3">
               <div className="min-w-0">
                 <span className="text-[11.5px] font-bold text-white block">Cut & Trim</span>
-                <span className="text-[9px] text-slate-400 block leading-normal mt-0.5">Split, speed & crop</span>
+                <span className="text-[9px] text-slate-400 block leading-normal mt-0.5">Fast & precise editing</span>
               </div>
               <div className="w-6 h-6 rounded-full bg-blue-950/80 group-hover:bg-blue-600 group-hover:text-white border border-blue-500/40 flex items-center justify-center text-blue-300 shrink-0 transition-all shadow-md">
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -570,7 +565,7 @@ export default function Dashboard({
             <div className="flex items-end justify-between gap-1 mt-3">
               <div className="min-w-0">
                 <span className="text-[11.5px] font-bold text-white block">Color Grading</span>
-                <span className="text-[9px] text-slate-400 block leading-normal mt-0.5">DaVinci 3-Way wheels</span>
+                <span className="text-[9px] text-slate-400 block leading-normal mt-0.5">Enhance your colors</span>
               </div>
               <div className="w-6 h-6 rounded-full bg-teal-950/80 group-hover:bg-teal-600 group-hover:text-white border border-teal-500/40 flex items-center justify-center text-teal-300 shrink-0 transition-all shadow-md">
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -578,7 +573,7 @@ export default function Dashboard({
             </div>
           </div>
 
-          {/* Card 4: Audio Studio (Magenta glow) */}
+          {/* Card 4: Add Music (Magenta/Purple glow) */}
           <div
             onClick={() => onLaunchEditor('audio')}
             className="quick-tool-card quick-tool-pink cursor-pointer group"
@@ -588,8 +583,8 @@ export default function Dashboard({
             </div>
             <div className="flex items-end justify-between gap-1 mt-3">
               <div className="min-w-0">
-                <span className="text-[11.5px] font-bold text-white block">Audio Studio</span>
-                <span className="text-[9px] text-slate-400 block leading-normal mt-0.5">10-Band EQ & Ducking</span>
+                <span className="text-[11.5px] font-bold text-white block">Add Music</span>
+                <span className="text-[9px] text-slate-400 block leading-normal mt-0.5">Royalty free soundtracks</span>
               </div>
               <div className="w-6 h-6 rounded-full bg-pink-950/80 group-hover:bg-pink-600 group-hover:text-white border border-pink-500/40 flex items-center justify-center text-pink-300 shrink-0 transition-all shadow-md">
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -597,18 +592,18 @@ export default function Dashboard({
             </div>
           </div>
 
-          {/* Card 5: Motion & PiP (Cyan glow) */}
+          {/* Card 5: Text & Titles (Cyan/Blue glow) */}
           <div
-            onClick={() => onLaunchEditor('motion')}
+            onClick={() => onLaunchEditor('capcut')}
             className="quick-tool-card quick-tool-cyan cursor-pointer group col-span-2 sm:col-span-1"
           >
             <div className="w-9 h-9 rounded-xl bg-cyan-500/15 border border-cyan-500/40 flex items-center justify-center text-cyan-300 group-hover:scale-110 transition-transform shadow-[0_0_12px_rgba(6,182,212,0.3)]">
-              <Type className="w-4 h-4 text-cyan-300" />
+              <Type className="w-4 h-4 text-cyan-300 font-bold" />
             </div>
             <div className="flex items-end justify-between gap-1 mt-3">
               <div className="min-w-0">
-                <span className="text-[11.5px] font-bold text-white block">Motion & PiP</span>
-                <span className="text-[9px] text-slate-400 block leading-normal mt-0.5">Keyframes & Blending</span>
+                <span className="text-[11.5px] font-bold text-white block">Text & Titles</span>
+                <span className="text-[9px] text-slate-400 block leading-normal mt-0.5">Stylish text effects</span>
               </div>
               <div className="w-6 h-6 rounded-full bg-cyan-950/80 group-hover:bg-cyan-600 group-hover:text-white border border-cyan-500/40 flex items-center justify-center text-cyan-300 shrink-0 transition-all shadow-md">
                 <ArrowRight className="w-3.5 h-3.5" />

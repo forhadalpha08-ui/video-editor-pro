@@ -44,7 +44,7 @@ export const projectPresets: Project[] = [
         },
         volume: 100,
         videoUrl: '/1.mp4',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
+        thumbnailUrl: '/bg2.png',
         effect: 'cinema_glow',
         keyframes: [
           { id: 'kf1_1', time: 0, opacity: 0, scale: 105, positionX: 50, positionY: 50, rotation: 0 },
@@ -125,7 +125,7 @@ export const projectPresets: Project[] = [
         },
         volume: 100,
         videoUrl: '/2.mp4',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=400&q=80',
+        thumbnailUrl: '/bg2.png',
         aspectRatio: '2.39:1',
       }
     ],
@@ -190,7 +190,7 @@ export const projectPresets: Project[] = [
         },
         volume: 100,
         videoUrl: '/3.mp4',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=400&q=80',
+        thumbnailUrl: '/bg2.png',
         speedKeyframes: [
           { id: 'sk1', time: 0, speed: 1.0 },
           { id: 'sk2', time: 4.0, speed: 0.5 },
@@ -259,7 +259,7 @@ export const projectPresets: Project[] = [
         },
         volume: 90,
         videoUrl: '/4.mp4',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=400&q=80',
+        thumbnailUrl: '/bg2.png',
       }
     ],
     audioClips: [
@@ -332,7 +332,7 @@ export const projectPresets: Project[] = [
         },
         volume: 95,
         videoUrl: '/5.mp4',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1501555088652-021faa106b9b?auto=format&fit=crop&w=400&q=80',
+        thumbnailUrl: '/bg2.png',
         aspectRatio: '2.39:1',
         effect: 'anamorphic',
       }
@@ -393,7 +393,7 @@ export const projectPresets: Project[] = [
         },
         volume: 90,
         videoUrl: '/6.mp4',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=400&q=80',
+        thumbnailUrl: '/bg2.png',
         effect: 'vhs',
       }
     ],
@@ -455,7 +455,7 @@ export const projectPresets: Project[] = [
         },
         volume: 100,
         videoUrl: '/7.mp4',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+        thumbnailUrl: '/bg2.png',
       }
     ],
     audioClips: [
@@ -515,7 +515,7 @@ export const projectPresets: Project[] = [
         },
         volume: 100,
         videoUrl: '/8.mp4',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=400&q=80',
+        thumbnailUrl: '/bg2.png',
         effect: 'rgb_split',
       }
     ],
@@ -579,7 +579,7 @@ export const projectPresets: Project[] = [
         },
         volume: 90,
         videoUrl: '/9.mp4',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=400&q=80',
+        thumbnailUrl: '/bg2.png',
         effect: 'vhs',
       }
     ],
@@ -640,7 +640,7 @@ export const projectPresets: Project[] = [
         },
         volume: 85,
         videoUrl: '/10.mp4',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1511556532299-8f662fc26c06?auto=format&fit=crop&w=400&q=80',
+        thumbnailUrl: '/bg2.png',
         effect: 'film_grain',
         aspectRatio: '4:3',
       }
@@ -701,7 +701,7 @@ export const projectPresets: Project[] = [
         },
         volume: 90,
         videoUrl: '/11.mp4',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=400&q=80',
+        thumbnailUrl: '/bg2.png',
         effect: 'bloom',
       }
     ],
@@ -762,7 +762,7 @@ export const projectPresets: Project[] = [
         },
         volume: 95,
         videoUrl: '/12.mp4',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?auto=format&fit=crop&w=400&q=80',
+        thumbnailUrl: '/bg2.png',
         effect: 'cinema_glow',
       }
     ],

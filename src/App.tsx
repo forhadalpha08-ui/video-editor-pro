@@ -197,10 +197,10 @@ export default function App() {
     };
 
     const thumbnailUrls: Record<ProceduralType, string> = {
-      vaporwave_sunset: 'https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=400&q=80',
-      cyberpunk_grid: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80',
-      geometric_warp: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=400&q=80',
-      nebula_ocean: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=80',
+      vaporwave_sunset: '/bg2.png',
+      cyberpunk_grid: '/bg99.png',
+      geometric_warp: '/bg2-1.png',
+      nebula_ocean: '/bg2.png',
     };
 
     const newVideo: VideoClip = {
@@ -383,7 +383,7 @@ export default function App() {
           colorGrading: createDefaultGrading(),
           volume: 0,
           videoUrl: videoUrl,
-          thumbnailUrl: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=400&q=80',
+          thumbnailUrl: '/bg2.png',
         }
       ],
       audioClips: [
@@ -430,13 +430,13 @@ export default function App() {
         {/* Starry deep space background layer */}
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-screen" 
-          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?auto=format&fit=crop&w=1600&q=80')" }} 
+          style={{ backgroundImage: "url('/bg99.png')" }} 
         />
         {/* Glowing Planet Earth / Cosmic sphere in top right */}
         <div 
           className="absolute -top-[15%] -right-[15%] w-[850px] h-[850px] rounded-full bg-cover bg-center opacity-[0.22] mix-blend-screen filter blur-[0.5px] animate-pulse" 
           style={{ 
-            backgroundImage: "url('https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?auto=format&fit=crop&w=1000&q=80')",
+            backgroundImage: "url('/bg2.png')",
             boxShadow: '0 0 120px rgba(139, 92, 246, 0.25), inset 0 0 100px rgba(0, 0, 0, 0.9)'
           }} 
         />
@@ -480,9 +480,9 @@ export default function App() {
           </button>
 
           {/* User profile avatar with circular neon halo ring */}
-          <div className="w-7 h-7 rounded-full border border-cyan-400 p-0.5 shadow-[0_0_10px_rgba(34,211,238,0.5)] shrink-0">
+          <div className="w-7 h-7 rounded-full border border-cyan-400 p-0.5 shadow-[0_0_10px_rgba(34,211,238,0.5)] shrink-0 overflow-hidden bg-slate-900">
             <img
-              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
+              src="/logomax.png"
               alt="Profile"
               className="w-full h-full object-cover rounded-full"
             />
@@ -650,7 +650,7 @@ export default function App() {
               {/* Mini Cosmic planet sphere */}
               <div className="relative w-24 h-24 mx-auto rounded-full overflow-hidden flex items-center justify-center shadow-xl">
                 <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#020108] via-[#4d0c7b] to-[#ea00d9] shadow-[inset_-6px_-6px_20px_rgba(0,0,0,0.95),_0_0_25px_rgba(234,0,217,0.4)]" />
-                <div className="absolute inset-0 rounded-full opacity-55 mix-blend-screen bg-cover animate-planet-clouds" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?auto=format&fit=crop&w=300&q=50')" }} />
+                <div className="absolute inset-0 rounded-full opacity-60 mix-blend-screen bg-cover animate-planet-clouds" style={{ backgroundImage: "url('/bg2.png')" }} />
               </div>
 
               <div className="flex flex-col gap-0.5 text-left">
@@ -802,7 +802,7 @@ export default function App() {
           {/* Cosmic planet sphere */}
           <div className="relative w-36 h-36 mx-auto rounded-full overflow-hidden flex items-center justify-center group cursor-pointer shadow-2xl">
             <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#020108] via-[#4d0c7b] to-[#ea00d9] shadow-[inset_-10px_-10px_30px_rgba(0,0,0,0.95),_0_0_35px_rgba(234,0,217,0.5)]" />
-            <div className="absolute inset-0 rounded-full opacity-55 mix-blend-screen bg-cover animate-planet-clouds" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?auto=format&fit=crop&w=300&q=50')" }} />
+            <div className="absolute inset-0 rounded-full opacity-60 mix-blend-screen bg-cover animate-planet-clouds" style={{ backgroundImage: "url('/bg2.png')" }} />
             <div className="absolute w-52 h-4 border-t-2 border-b-2 border-indigo-400/50 rounded-full rotate-[-12deg] scale-y-[0.25] blur-[0.5px] pointer-events-none" />
           </div>
           

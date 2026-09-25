@@ -46,37 +46,63 @@ interface DashboardProps {
   onOpenProfileModal?: () => void;
 }
 
-// Interactive Video Thumbnail Component that plays real video on hover & preloads immediately
+// Interactive Video Thumbnail Component that automatically plays smoothly on page load
 function VideoThumb({ videoFile, className }: { videoFile: string; className?: string }) {
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const src = getAssetUrl(videoFile);
+
+  React.useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const startSmoothAutoplay = () => {
+      video.muted = true;
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // If browser restricts un-interacted autoplay, seek to first frame immediately
+          if (video.currentTime === 0) {
+            video.currentTime = 0.001;
+          }
+        });
+      }
+    };
+
+    if (video.readyState >= 2) {
+      startSmoothAutoplay();
+    } else {
+      video.addEventListener('loadeddata', startSmoothAutoplay, { once: true });
+      video.addEventListener('canplay', startSmoothAutoplay, { once: true });
+      video.addEventListener('loadedmetadata', startSmoothAutoplay, { once: true });
+    }
+
+    return () => {
+      video.removeEventListener('loadeddata', startSmoothAutoplay);
+      video.removeEventListener('canplay', startSmoothAutoplay);
+      video.removeEventListener('loadedmetadata', startSmoothAutoplay);
+    };
+  }, [src]);
 
   return (
     <video
       ref={videoRef}
       src={src}
+      autoPlay
       muted
       playsInline
       preload="auto"
       loop
-      onLoadedMetadata={() => {
-        if (videoRef.current && videoRef.current.currentTime === 0) {
-          videoRef.current.currentTime = 0.001;
-        }
+      onLoadedMetadata={(e) => {
+        e.currentTarget.muted = true;
+        e.currentTarget.play().catch(() => {});
       }}
-      onLoadedData={() => {
-        if (videoRef.current && videoRef.current.currentTime === 0) {
-          videoRef.current.currentTime = 0.001;
-        }
+      onLoadedData={(e) => {
+        e.currentTarget.muted = true;
+        e.currentTarget.play().catch(() => {});
       }}
-      onMouseEnter={() => {
-        videoRef.current?.play().catch(() => {});
-      }}
-      onMouseLeave={() => {
-        if (videoRef.current) {
-          videoRef.current.pause();
-          videoRef.current.currentTime = 0.001;
-        }
+      onCanPlay={(e) => {
+        e.currentTarget.muted = true;
+        e.currentTarget.play().catch(() => {});
       }}
       className={className || "w-full h-full object-cover"}
     />

@@ -34,7 +34,6 @@ import {
 } from 'lucide-react';
 import { Project, ProceduralType } from '../types';
 import { getAssetUrl } from '../utils/assetUrl';
-import { getVideoPoster, captureRealVideoPoster } from '../utils/videoThumbnails';
 
 interface DashboardProps {
   projects: Project[];
@@ -47,114 +46,40 @@ interface DashboardProps {
   onOpenProfileModal?: () => void;
 }
 
-// Interactive Video Thumbnail Component with 0ms Instant Poster & Real Frame Snapshotting
-function VideoThumb({ 
-  videoFile, 
-  className,
-  autoPlay = true
-}: { 
-  videoFile: string; 
-  className?: string;
-  autoPlay?: boolean;
-}) {
+// Interactive Video Thumbnail Component that plays real video on hover & preloads immediately
+function VideoThumb({ videoFile, className }: { videoFile: string; className?: string }) {
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const src = getAssetUrl(videoFile);
-  const [posterUrl, setPosterUrl] = React.useState<string>(() => getVideoPoster(videoFile));
-  const [isPlaying, setIsPlaying] = React.useState(false);
-
-  React.useEffect(() => {
-    // Listen for real video frame capture events from any video player
-    const handlePosterUpdate = (e: any) => {
-      const normalized = videoFile.replace(/^.*[\\/]/, '');
-      if (e.detail?.videoFile === normalized && e.detail?.posterUrl) {
-        setPosterUrl(e.detail.posterUrl);
-      }
-    };
-    window.addEventListener('vido_poster_updated', handlePosterUpdate);
-    return () => window.removeEventListener('vido_poster_updated', handlePosterUpdate);
-  }, [videoFile]);
-
-  React.useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    const onReady = () => {
-      // Capture real frame snapshot into cache
-      captureRealVideoPoster(video, videoFile);
-      if (autoPlay) {
-        const playPromise = video.play();
-        if (playPromise !== undefined) {
-          playPromise
-            .then(() => setIsPlaying(true))
-            .catch(() => {
-              if (video.currentTime === 0) video.currentTime = 0.001;
-            });
-        }
-      } else if (video.currentTime === 0) {
-        video.currentTime = 0.001;
-      }
-    };
-
-    if (video.readyState >= 2) {
-      onReady();
-    } else {
-      video.addEventListener('loadeddata', onReady, { once: true });
-      video.addEventListener('canplay', onReady, { once: true });
-    }
-
-    return () => {
-      video.removeEventListener('loadeddata', onReady);
-      video.removeEventListener('canplay', onReady);
-    };
-  }, [src, autoPlay, videoFile]);
 
   return (
-    <div className={`relative w-full h-full overflow-hidden bg-[#060a1d] select-none ${className || ''}`}>
-      {/* 0.0ms Instant Real/Thematic Image Poster (Renders with ZERO delay) */}
-      <img
-        src={posterUrl}
-        alt={videoFile}
-        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
-          isPlaying ? 'opacity-0 pointer-events-none' : 'opacity-100'
-        }`}
-        loading="eager"
-      />
-
-      {/* Real Video Stream Component */}
-      <video
-        ref={videoRef}
-        src={src}
-        poster={posterUrl}
-        muted
-        playsInline
-        preload="auto"
-        loop
-        autoPlay={autoPlay}
-        onLoadedData={(e) => {
-          captureRealVideoPoster(e.currentTarget, videoFile);
-        }}
-        onTimeUpdate={(e) => {
-          if (!posterUrl.startsWith('data:image/jpeg')) {
-            captureRealVideoPoster(e.currentTarget, videoFile);
-          }
-        }}
-        onPlaying={() => setIsPlaying(true)}
-        onPause={() => setIsPlaying(false)}
-        onMouseEnter={() => {
-          videoRef.current?.play().then(() => setIsPlaying(true)).catch(() => {});
-        }}
-        onMouseLeave={() => {
-          if (!autoPlay && videoRef.current) {
-            videoRef.current.pause();
-            videoRef.current.currentTime = 0.001;
-            setIsPlaying(false);
-          }
-        }}
-        className={`relative z-10 w-full h-full object-cover transition-opacity duration-300 ${
-          isPlaying ? 'opacity-100' : 'opacity-0'
-        }`}
-      />
-    </div>
+    <video
+      ref={videoRef}
+      src={src}
+      muted
+      playsInline
+      preload="auto"
+      loop
+      onLoadedMetadata={() => {
+        if (videoRef.current && videoRef.current.currentTime === 0) {
+          videoRef.current.currentTime = 0.001;
+        }
+      }}
+      onLoadedData={() => {
+        if (videoRef.current && videoRef.current.currentTime === 0) {
+          videoRef.current.currentTime = 0.001;
+        }
+      }}
+      onMouseEnter={() => {
+        videoRef.current?.play().catch(() => {});
+      }}
+      onMouseLeave={() => {
+        if (videoRef.current) {
+          videoRef.current.pause();
+          videoRef.current.currentTime = 0.001;
+        }
+      }}
+      className={className || "w-full h-full object-cover"}
+    />
   );
 }
 
@@ -494,13 +419,17 @@ export default function Dashboard({
           </div>
         </div>
 
-        {/* Right Hero Video Card with Real Video Playback & 0ms Instant Poster */}
-        <div className="relative w-full lg:w-[460px] aspect-[16/10] rounded-2xl overflow-hidden border border-indigo-500/30 shadow-2xl shadow-indigo-600/20 group bg-[#070b1d]">
-          {/* Main Background Video Preview with Instant Poster */}
-          <VideoThumb
-            videoFile="1.mp4"
-            autoPlay={true}
-            className="group-hover:scale-105 transition-transform duration-700"
+        {/* Right Hero Video Card with Real Video Playback */}
+        <div className="relative w-full lg:w-[460px] aspect-[16/10] rounded-2xl overflow-hidden border border-indigo-500/30 shadow-2xl shadow-indigo-600/20 group">
+          {/* Main Background Video Preview */}
+          <video
+            src={getAssetUrl('1.mp4')}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
 

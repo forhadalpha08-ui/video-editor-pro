@@ -4,7 +4,6 @@ import { Project, VideoClip, TextClip, TimelineTransition, interpolateKeyframes,
 import { drawClipFrame, drawTextOverlay, drawTransitionFrame, applyVideoEffects, applyChromaKey } from '../utils/proceduralRenderer';
 import { audioSynth } from '../utils/audioSynthesizer';
 import { getAssetUrl } from '../utils/assetUrl';
-import { getVideoPoster, captureRealVideoPoster } from '../utils/videoThumbnails';
 
 interface PreviewPlayerProps {
   project: Project;
@@ -535,9 +534,6 @@ export default function PreviewPlayer({
         oCtx.drawImage(video, sx, sy, sw, sh, 0, 0, 640, 360);
         oCtx.filter = 'none';
 
-        // Capture real frame snapshot for instant cards across the app
-        captureRealVideoPoster(video, clip.videoUrl);
-
         // Cache last valid frame for this clip
         let snap = lastRenderedCanvasRef.current.get(clip.id);
         if (!snap) {
@@ -556,28 +552,16 @@ export default function PreviewPlayer({
         oCtx.drawImage(lastRenderedCanvasRef.current.get(clip.id)!, 0, 0, 640, 360);
         oCtx.filter = 'none';
       } else {
-        // Instant visual poster rendering while stream buffers
-        const posterSrc = getVideoPoster(clip.videoUrl);
-        let posterImg = imageCacheRef.current.get(posterSrc);
-        if (!posterImg) {
-          posterImg = new Image();
-          posterImg.src = posterSrc;
-          imageCacheRef.current.set(posterSrc, posterImg);
-        }
-
-        if (posterImg.complete && posterImg.naturalWidth > 0) {
-          oCtx.drawImage(posterImg, 0, 0, 640, 360);
-        } else {
-          oCtx.fillStyle = '#050711';
-          oCtx.fillRect(0, 0, 640, 360);
-          oCtx.fillStyle = '#00ffea';
-          oCtx.font = 'bold 12px Inter, sans-serif';
-          oCtx.textAlign = 'center';
-          oCtx.fillText(`🎬 ${clip.name}`, 320, 172);
-          oCtx.fillStyle = '#64748b';
-          oCtx.font = '10px Inter, sans-serif';
-          oCtx.fillText('Loading media stream...', 320, 195);
-        }
+        // Sleek dark placeholder showing only the selected video title
+        oCtx.fillStyle = '#050711';
+        oCtx.fillRect(0, 0, 640, 360);
+        oCtx.fillStyle = '#00ffea';
+        oCtx.font = 'bold 12px Inter, sans-serif';
+        oCtx.textAlign = 'center';
+        oCtx.fillText(`🎬 ${clip.name}`, 320, 172);
+        oCtx.fillStyle = '#64748b';
+        oCtx.font = '10px Inter, sans-serif';
+        oCtx.fillText('Loading media stream...', 320, 195);
       }
     } else {
       oCtx.fillStyle = '#050711';

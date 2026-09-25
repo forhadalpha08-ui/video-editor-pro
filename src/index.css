@@ -8,102 +8,190 @@
 }
 
 :root {
-  --bg-main: #050712;
-  --bg-panel: #090D1C;
-  --bg-panel-secondary: #0D1224;
-  --accent-primary: #7C3AED;
-  --accent-secondary: #3B82F6;
-  --accent-cyan: #06B6D4;
-  --text-main: #F8FAFC;
-  --text-muted: #94A3B8;
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-active: rgba(124, 58, 237, 0.4);
+  --cosmic-bg: #010314;
+  --sidebar-bg: #030617;
+  --card-bg: #04081c;
+  --card-bg-hover: #070e2a;
+  --border-neon-blue: rgba(56, 189, 248, 0.35);
+  --border-neon-purple: rgba(168, 85, 247, 0.35);
+  --border-neon-pink: rgba(236, 72, 153, 0.35);
 }
 
 body {
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  background-color: #050712;
-  color: #F8FAFC;
-  overflow: hidden;
+  background-color: #010314;
+  color: #f1f5f9;
+  overflow-x: hidden;
   user-select: none;
   -webkit-user-select: none;
   background-image: 
-    radial-gradient(circle at 10% 10%, rgba(124, 58, 237, 0.06) 0px, transparent 40%),
-    radial-gradient(circle at 90% 15%, rgba(59, 130, 246, 0.06) 0px, transparent 45%),
-    radial-gradient(circle at 50% 90%, rgba(6, 182, 212, 0.04) 0px, transparent 50%);
+    radial-gradient(ellipse at 15% 15%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
+    radial-gradient(ellipse at 85% 25%, rgba(168, 85, 247, 0.12) 0px, transparent 55%),
+    radial-gradient(ellipse at 50% 85%, rgba(56, 189, 248, 0.08) 0px, transparent 60%);
   background-attachment: fixed;
 }
 
 /* =========================================================
-   VEdit Pro UI Design Styles
+   EXACT MOCKUP COSMIC NEON CARD STYLES
    ========================================================= */
 
-/* Dark Cinematic Panels */
-.vedit-panel {
-  background-color: #090D1C;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
+/* Left Sidebar Capsule Card */
+.sidebar-capsule {
+  background: linear-gradient(180deg, #04071b 0%, #030616 50%, #020410 100%);
+  border: 1.5px solid rgba(59, 130, 246, 0.3);
+  box-shadow: 
+    0 0 25px rgba(37, 99, 235, 0.2),
+    inset 0 0 20px rgba(37, 99, 235, 0.05);
+  border-radius: 36px;
 }
 
-.vedit-panel-secondary {
-  background-color: #0D1224;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
+/* Cosmic Glow Containers */
+.cosmic-card {
+  background: linear-gradient(180deg, rgba(6, 10, 28, 0.9) 0%, rgba(3, 6, 20, 0.95) 100%);
+  border: 1px solid rgba(59, 130, 246, 0.22);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    0 0 15px rgba(59, 130, 246, 0.08),
+    inset 0 0 15px rgba(59, 130, 246, 0.03);
+  border-radius: 28px;
 }
 
-/* Primary Purple-to-Blue Gradient Button */
-.btn-vedit-primary {
-  background: linear-gradient(135deg, #7C3AED 0%, #3B82F6 100%);
+.cosmic-card:hover {
+  border-color: rgba(99, 102, 241, 0.4);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.7),
+    0 0 25px rgba(99, 102, 241, 0.15);
+}
+
+/* Quick Tools Glowing Cards */
+.quick-tool-card {
+  position: relative;
+  background: linear-gradient(180deg, #05081c 0%, #030615 100%);
+  border-radius: 24px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 148px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.quick-tool-purple {
+  border: 1.5px solid rgba(168, 85, 247, 0.35);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.12), inset 0 0 15px rgba(168, 85, 247, 0.05);
+}
+.quick-tool-purple:hover {
+  border-color: rgba(192, 132, 252, 0.8);
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.35), inset 0 0 20px rgba(168, 85, 247, 0.15);
+  transform: translateY(-3px);
+}
+
+.quick-tool-blue {
+  border: 1.5px solid rgba(59, 130, 246, 0.35);
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.12), inset 0 0 15px rgba(59, 130, 246, 0.05);
+}
+.quick-tool-blue:hover {
+  border-color: rgba(96, 165, 250, 0.8);
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.35), inset 0 0 20px rgba(59, 130, 246, 0.15);
+  transform: translateY(-3px);
+}
+
+.quick-tool-teal {
+  border: 1.5px solid rgba(20, 184, 166, 0.35);
+  box-shadow: 0 0 20px rgba(20, 184, 166, 0.12), inset 0 0 15px rgba(20, 184, 166, 0.05);
+}
+.quick-tool-teal:hover {
+  border-color: rgba(45, 212, 191, 0.8);
+  box-shadow: 0 0 30px rgba(20, 184, 166, 0.35), inset 0 0 20px rgba(20, 184, 166, 0.15);
+  transform: translateY(-3px);
+}
+
+.quick-tool-pink {
+  border: 1.5px solid rgba(236, 72, 153, 0.35);
+  box-shadow: 0 0 20px rgba(236, 72, 153, 0.12), inset 0 0 15px rgba(236, 72, 153, 0.05);
+}
+.quick-tool-pink:hover {
+  border-color: rgba(244, 114, 182, 0.8);
+  box-shadow: 0 0 30px rgba(236, 72, 153, 0.35), inset 0 0 20px rgba(236, 72, 153, 0.15);
+  transform: translateY(-3px);
+}
+
+.quick-tool-cyan {
+  border: 1.5px solid rgba(6, 182, 212, 0.35);
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.12), inset 0 0 15px rgba(6, 182, 212, 0.05);
+}
+.quick-tool-cyan:hover {
+  border-color: rgba(34, 211, 238, 0.8);
+  box-shadow: 0 0 30px rgba(6, 182, 212, 0.35), inset 0 0 20px rgba(6, 182, 212, 0.15);
+  transform: translateY(-3px);
+}
+
+/* Category Cards */
+.template-category-card {
+  position: relative;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1.5px solid rgba(59, 130, 246, 0.25);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  transition: all 0.35s ease;
+}
+.template-category-card:hover {
+  border-color: rgba(99, 102, 241, 0.65);
+  box-shadow: 0 8px 30px rgba(99, 102, 241, 0.25);
+  transform: translateY(-2px);
+}
+
+/* Buttons with Gradient Glow */
+.btn-cosmic-primary {
+  background: linear-gradient(90deg, #2563eb 0%, #6366f1 50%, #9333ea 100%);
+  border: 1px solid rgba(192, 132, 252, 0.4);
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2);
   color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.25s ease;
+}
+.btn-cosmic-primary:hover {
+  background: linear-gradient(90deg, #3b82f6 0%, #4f46e5 50%, #a855f7 100%);
+  box-shadow: 0 6px 28px rgba(99, 102, 241, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  transform: scale(1.02);
+}
+.btn-cosmic-primary:active {
+  transform: scale(0.98);
 }
 
-.btn-vedit-primary:hover {
-  background: linear-gradient(135deg, #8B5CF6 0%, #60A5FA 100%);
-  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.5);
-  transform: translateY(-1px);
+.btn-sidebar-active {
+  background: linear-gradient(90deg, #2563eb 0%, #4f46e5 50%, #7c3aed 100%);
+  border: 1px solid rgba(165, 180, 252, 0.4);
+  box-shadow: 0 4px 18px rgba(79, 70, 229, 0.45);
+  color: #ffffff;
 }
 
-.btn-vedit-primary:active {
-  transform: translateY(0px);
+/* Keyframes for planet clouds slow rotation */
+@keyframes rot-clouds {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-/* Vertical Dock Active Item Highlight */
-.dock-item-active {
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.25) 0%, rgba(59, 130, 246, 0.25) 100%);
-  border: 1px solid rgba(124, 58, 237, 0.5);
-  color: #F8FAFC;
-  box-shadow: 0 0 16px rgba(124, 58, 237, 0.25);
-}
-
-/* Video Clip Filmstrip & Timeline Items */
-.clip-filmstrip {
-  background-size: cover;
-  background-position: center;
-}
-
-/* Interactive Sliders */
-input[type="range"] {
-  accent-color: #7C3AED;
+.animate-planet-clouds {
+  background-size: 200% 200%;
+  animation: rot-clouds 24s linear infinite;
 }
 
 /* Custom Scrollbars */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #090D1C;
+  background: rgba(3, 6, 20, 0.8);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: 4px;
+  background: rgba(99, 102, 241, 0.35);
+  border-radius: 8px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(124, 58, 237, 0.5);
+  background: rgba(99, 102, 241, 0.6);
 }

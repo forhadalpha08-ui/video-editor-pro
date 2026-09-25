@@ -6,11 +6,13 @@ import {
   Upload, 
   ChevronDown, 
   Check, 
-  Sparkles,
-  Settings,
-  HelpCircle,
-  Keyboard,
-  User
+  Sparkles, 
+  Settings, 
+  HelpCircle, 
+  Keyboard, 
+  User,
+  Home,
+  ArrowLeft
 } from 'lucide-react';
 import { Project } from '../../types';
 
@@ -25,6 +27,7 @@ interface TopNavProps {
   canRedo: boolean;
   onOpenExport: () => void;
   onOpenShortcuts: () => void;
+  onGoHome?: () => void;
 }
 
 export default function TopNav({
@@ -38,6 +41,7 @@ export default function TopNav({
   canRedo,
   onOpenExport,
   onOpenShortcuts,
+  onGoHome,
 }: TopNavProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [tempTitle, setTempTitle] = useState(project.name);
@@ -60,9 +64,20 @@ export default function TopNav({
   return (
     <header className="h-14 bg-[#090D1C] border-b border-white/8 px-4 flex items-center justify-between select-none z-30 shrink-0">
       
-      {/* Left: Logo & Brand */}
+      {/* Left: Logo & Brand + Home Nav */}
       <div className="flex items-center gap-3 min-w-[200px]">
-        <div className="flex items-center gap-2 cursor-pointer group">
+        {onGoHome && (
+          <button
+            onClick={onGoHome}
+            className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-all flex items-center gap-1.5 text-xs font-semibold cursor-pointer border border-white/8"
+            title="Back to Dashboard"
+          >
+            <ArrowLeft className="w-3.5 h-3.5 text-[#A78BFA]" />
+            <span className="hidden sm:inline">Home</span>
+          </button>
+        )}
+
+        <div onClick={onGoHome} className="flex items-center gap-2 cursor-pointer group">
           {/* Stylized Modern VEdit Vector Logo */}
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#7C3AED] via-[#6366F1] to-[#3B82F6] p-[1.5px] shadow-lg shadow-purple-900/30 group-hover:shadow-purple-700/50 transition-all flex items-center justify-center">
             <div className="w-full h-full bg-[#090D1C] rounded-[7px] flex items-center justify-center">

@@ -6,9 +6,7 @@ import {
   TextClip, 
   CaptionItem, 
   MediaAsset, 
-  TransitionType, 
-  VideoEffectType, 
-  FilterPresetType 
+  ProceduralType 
 } from './types';
 
 // Layout & Navigation
@@ -33,8 +31,326 @@ import VideoPreview from './components/preview/VideoPreview';
 import InspectorPanel from './components/inspector/InspectorPanel';
 import Timeline from './components/timeline/Timeline';
 import ExportModal from './components/export/ExportModal';
+import Dashboard from './components/Dashboard';
 
-// Initial Demo Assets matching mockup
+import { 
+  Home, 
+  Sliders, 
+  Sparkles, 
+  Download, 
+  Crown, 
+  Compass, 
+  Folder, 
+  Film, 
+  BookOpen,
+  Plus
+} from 'lucide-react';
+
+// Real Template Projects
+const ALL_PROJECTS: Project[] = [
+  {
+    id: 'template_1',
+    name: 'Neon City Night Edit',
+    category: 'Cinematic',
+    resolution: '1080p',
+    fps: 60,
+    aspectRatio: '16:9',
+    duration: 116,
+    videoClips: [
+      {
+        id: 'v1_1',
+        name: 'Neon Skyline (1.mp4)',
+        type: 'video',
+        startTime: 0,
+        duration: 35,
+        sourceStart: 0,
+        sourceDuration: 60,
+        speed: 1.0,
+        volume: 100,
+        trackId: 'v1',
+        videoUrl: '/1.mp4',
+        thumbnailUrl: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=500&auto=format&fit=crop&q=80',
+        scale: 100,
+        positionX: 50,
+        positionY: 50,
+        rotation: 0,
+        opacity: 100,
+        colorGrading: {
+          exposure: 0,
+          brightness: 0,
+          contrast: 10,
+          highlights: 0,
+          shadows: 0,
+          saturation: 15,
+          temperature: 5,
+          tint: 0,
+          sharpness: 0,
+          vignette: 15,
+          filterPreset: 'cyberpunk_neon',
+          filterIntensity: 100,
+        },
+      },
+      {
+        id: 'v1_2',
+        name: 'Cyber Streets (7.mp4)',
+        type: 'video',
+        startTime: 35,
+        duration: 45,
+        sourceStart: 0,
+        sourceDuration: 55,
+        speed: 1.0,
+        volume: 100,
+        trackId: 'v1',
+        videoUrl: '/7.mp4',
+        thumbnailUrl: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=500&auto=format&fit=crop&q=80',
+        scale: 100,
+        positionX: 50,
+        positionY: 50,
+        rotation: 0,
+        opacity: 100,
+        colorGrading: {
+          exposure: 0,
+          brightness: 0,
+          contrast: 5,
+          highlights: 0,
+          shadows: 0,
+          saturation: 10,
+          temperature: 0,
+          tint: 0,
+          sharpness: 0,
+          vignette: 10,
+          filterPreset: 'cinematic_teal_orange',
+          filterIntensity: 100,
+        },
+      },
+    ],
+    audioClips: [
+      {
+        id: 'a1_1',
+        name: 'Synthwave Odyssey',
+        type: 'audio',
+        startTime: 0,
+        duration: 110,
+        sourceStart: 0,
+        volume: 100,
+        pan: 0,
+        audioStyle: 'synth_wave',
+        trackId: 'a1',
+      },
+    ],
+    textClips: [
+      {
+        id: 't1_1',
+        name: 'Title Neon',
+        type: 'text',
+        startTime: 0,
+        duration: 25,
+        text: 'NEON HORIZON',
+        color: '#00FFFF',
+        fontSize: 48,
+        fontFamily: 'JetBrains Mono',
+        positionX: 50,
+        positionY: 50,
+        opacity: 100,
+        animation: 'pop',
+        trackId: 't1',
+      },
+    ],
+    captions: [],
+    transitions: [],
+  },
+  {
+    id: 'template_2',
+    name: 'Cinematic Travel Vlog',
+    category: 'Vlog',
+    resolution: '1080p',
+    fps: 60,
+    aspectRatio: '16:9',
+    duration: 204,
+    videoClips: [
+      {
+        id: 'v2_1',
+        name: 'Alpine Vista (2.mp4)',
+        type: 'video',
+        startTime: 0,
+        duration: 55,
+        sourceStart: 0,
+        sourceDuration: 70,
+        speed: 1.0,
+        volume: 100,
+        trackId: 'v1',
+        videoUrl: '/2.mp4',
+        thumbnailUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500&auto=format&fit=crop&q=80',
+        scale: 100,
+        positionX: 50,
+        positionY: 50,
+        rotation: 0,
+        opacity: 100,
+        colorGrading: {
+          exposure: 0,
+          brightness: 0,
+          contrast: 5,
+          highlights: 0,
+          shadows: 0,
+          saturation: 10,
+          temperature: -5,
+          tint: 0,
+          sharpness: 0,
+          vignette: 15,
+          filterPreset: 'cinematic_teal_orange',
+          filterIntensity: 100,
+        },
+      },
+      {
+        id: 'v2_2',
+        name: 'Forest Trail (3.mp4)',
+        type: 'video',
+        startTime: 55,
+        duration: 65,
+        sourceStart: 0,
+        sourceDuration: 80,
+        speed: 1.0,
+        volume: 100,
+        trackId: 'v1',
+        videoUrl: '/3.mp4',
+        thumbnailUrl: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=500&auto=format&fit=crop&q=80',
+        scale: 100,
+        positionX: 50,
+        positionY: 50,
+        rotation: 0,
+        opacity: 100,
+        colorGrading: {
+          exposure: 0,
+          brightness: 0,
+          contrast: 0,
+          highlights: 0,
+          shadows: 0,
+          saturation: 5,
+          temperature: 0,
+          tint: 0,
+          sharpness: 0,
+          vignette: 10,
+          filterPreset: 'moody_dark',
+          filterIntensity: 100,
+        },
+      },
+    ],
+    audioClips: [
+      {
+        id: 'a2_1',
+        name: 'Acoustic Wanderer',
+        type: 'audio',
+        startTime: 0,
+        duration: 180,
+        sourceStart: 0,
+        volume: 100,
+        pan: 0,
+        audioStyle: 'cinematic_score',
+        trackId: 'a1',
+      },
+    ],
+    textClips: [
+      {
+        id: 't2_1',
+        name: 'Vlog Title',
+        type: 'text',
+        startTime: 0,
+        duration: 30,
+        text: 'THE WILDERNESS AWAITS',
+        color: '#F8FAFC',
+        fontSize: 42,
+        fontFamily: 'Plus Jakarta Sans',
+        positionX: 50,
+        positionY: 50,
+        opacity: 100,
+        animation: 'cinematic',
+        trackId: 't1',
+      },
+    ],
+    captions: [],
+    transitions: [],
+  },
+  {
+    id: 'template_4',
+    name: 'Product Commercial Promo',
+    category: 'Lifestyle',
+    resolution: '1080p',
+    fps: 60,
+    aspectRatio: '16:9',
+    duration: 48,
+    videoClips: [
+      {
+        id: 'v4_1',
+        name: 'Product Hero (4.mp4)',
+        type: 'video',
+        startTime: 0,
+        duration: 48,
+        sourceStart: 0,
+        sourceDuration: 60,
+        speed: 1.0,
+        volume: 100,
+        trackId: 'v1',
+        videoUrl: '/4.mp4',
+        thumbnailUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=80',
+        scale: 100,
+        positionX: 50,
+        positionY: 50,
+        rotation: 0,
+        opacity: 100,
+        colorGrading: {
+          exposure: 0,
+          brightness: 0,
+          contrast: 10,
+          highlights: 0,
+          shadows: 0,
+          saturation: 10,
+          temperature: 0,
+          tint: 0,
+          sharpness: 0,
+          vignette: 10,
+          filterPreset: 'portrait_soft',
+          filterIntensity: 100,
+        },
+      },
+    ],
+    audioClips: [
+      {
+        id: 'a4_1',
+        name: 'Upbeat Modern Groove',
+        type: 'audio',
+        startTime: 0,
+        duration: 48,
+        sourceStart: 0,
+        volume: 100,
+        pan: 0,
+        audioStyle: 'beat_loop',
+        trackId: 'a1',
+      },
+    ],
+    textClips: [
+      {
+        id: 't4_1',
+        name: 'Commercial Tag',
+        type: 'text',
+        startTime: 0,
+        duration: 20,
+        text: 'INNOVATION REDEFINED',
+        color: '#F8FAFC',
+        fontSize: 44,
+        fontFamily: 'Plus Jakarta Sans',
+        positionX: 50,
+        positionY: 80,
+        opacity: 100,
+        animation: 'slide',
+        trackId: 't1',
+      },
+    ],
+    captions: [],
+    transitions: [],
+  },
+];
+
+// Initial Media Assets
 const INITIAL_ASSETS: MediaAsset[] = [
   {
     id: 'asset_mountain',
@@ -119,178 +435,21 @@ const INITIAL_ASSETS: MediaAsset[] = [
   },
 ];
 
-// Initial Demo Project matching reference layout
-const DEMO_PROJECT: Project = {
-  id: 'proj_01',
-  name: 'Project 01 - Cinematic Journey',
-  resolution: '1080p',
-  fps: 60,
-  aspectRatio: '16:9',
-  duration: 236, // 03:56
-  videoClips: [
-    {
-      id: 'v_mountain',
-      name: 'mountain.mp4',
-      type: 'video',
-      startTime: 0,
-      duration: 75,
-      sourceStart: 0,
-      sourceDuration: 90,
-      speed: 1.0,
-      volume: 100,
-      trackId: 'v1',
-      videoUrl: '/1.mp4',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500&auto=format&fit=crop&q=80',
-      scale: 100,
-      positionX: 50,
-      positionY: 50,
-      rotation: 0,
-      opacity: 100,
-      colorGrading: {
-        exposure: 0,
-        brightness: 0,
-        contrast: 5,
-        highlights: 0,
-        shadows: 0,
-        saturation: 10,
-        temperature: 0,
-        tint: 0,
-        sharpness: 0,
-        vignette: 15,
-        filterPreset: 'cinematic_teal_orange',
-        filterIntensity: 100,
-      },
-    },
-    {
-      id: 'v_city',
-      name: 'city.mp4',
-      type: 'video',
-      startTime: 0,
-      duration: 48,
-      sourceStart: 0,
-      sourceDuration: 60,
-      speed: 1.0,
-      volume: 100,
-      trackId: 'v2',
-      videoUrl: '/2.mp4',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=500&auto=format&fit=crop&q=80',
-      scale: 100,
-      positionX: 50,
-      positionY: 50,
-      rotation: 0,
-      opacity: 100,
-      colorGrading: {
-        exposure: 0,
-        brightness: 0,
-        contrast: 10,
-        highlights: 0,
-        shadows: 0,
-        saturation: 15,
-        temperature: 0,
-        tint: 0,
-        sharpness: 0,
-        vignette: 20,
-        filterPreset: 'none',
-        filterIntensity: 100,
-      },
-    },
-    {
-      id: 'v_forest',
-      name: 'forest.mp4',
-      type: 'video',
-      startTime: 50,
-      duration: 65,
-      sourceStart: 0,
-      sourceDuration: 80,
-      speed: 1.0,
-      volume: 100,
-      trackId: 'v2',
-      videoUrl: '/3.mp4',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=500&auto=format&fit=crop&q=80',
-      scale: 100,
-      positionX: 50,
-      positionY: 50,
-      rotation: 0,
-      opacity: 100,
-      colorGrading: {
-        exposure: 0,
-        brightness: 0,
-        contrast: 0,
-        highlights: 0,
-        shadows: 0,
-        saturation: 5,
-        temperature: -5,
-        tint: 0,
-        sharpness: 0,
-        vignette: 10,
-        filterPreset: 'moody_dark',
-        filterIntensity: 100,
-      },
-    },
-  ],
-  audioClips: [
-    {
-      id: 'a_background',
-      name: 'background.mp3',
-      type: 'audio',
-      startTime: 0,
-      duration: 200,
-      sourceStart: 0,
-      volume: 100,
-      pan: 0,
-      audioStyle: 'cinematic_score',
-      trackId: 'a1',
-    },
-    {
-      id: 'a_voiceover',
-      name: 'voiceover.mp3',
-      type: 'audio',
-      startTime: 35,
-      duration: 40,
-      sourceStart: 0,
-      volume: 100,
-      pan: 0,
-      audioStyle: 'voiceover',
-      trackId: 'a2',
-    },
-  ],
-  textClips: [
-    {
-      id: 't_cinematic',
-      name: 'Cinematic Journey',
-      type: 'text',
-      startTime: 0,
-      duration: 45,
-      text: 'CINEMATIC JOURNEY',
-      color: '#F8FAFC',
-      fontSize: 44,
-      fontFamily: 'Plus Jakarta Sans',
-      positionX: 50,
-      positionY: 50,
-      opacity: 100,
-      animation: 'cinematic',
-      trackId: 't1',
-    },
-  ],
-  captions: [
-    { id: 'c1', startTime: 2, endTime: 6, text: 'Across the mist of the morning mountains...' },
-    { id: 'c2', startTime: 7, endTime: 12, text: 'A new cinematic horizon awakens in 4K resolution.' },
-  ],
-  transitions: [
-    { id: 'trans_1', atTime: 48, type: 'cross_dissolve', duration: 1.0, fromClipId: 'v_city', toClipId: 'v_forest' }
-  ],
-};
-
 export default function App() {
-  // Main Project State
-  const [project, setProject] = useState<Project>(DEMO_PROJECT);
+  // Main View Navigation: 'home' (Dashboard) | 'editor' (VEdit Pro Workspace)
+  const [activeMainTab, setActiveMainTab] = useState<'home' | 'editor' | 'templates' | 'tutorials'>('home');
+  
+  // Projects state
+  const [projects, setProjects] = useState<Project[]>(ALL_PROJECTS);
+  const [currentProjectId, setCurrentProjectId] = useState<string>(ALL_PROJECTS[0].id);
+  const project = projects.find(p => p.id === currentProjectId) || projects[0];
+
   const [assets, setAssets] = useState<MediaAsset[]>(INITIAL_ASSETS);
   
-  // History Stacks for Real Undo / Redo
+  // History Stacks for Undo / Redo
   const [historyStack, setHistoryStack] = useState<Project[]>([]);
   const [redoStack, setRedoStack] = useState<Project[]>([]);
 
-  // Push new state to history stack
   const recordHistory = useCallback((current: Project) => {
     setHistoryStack((prev) => [...prev.slice(-30), JSON.parse(JSON.stringify(current))]);
     setRedoStack([]);
@@ -301,7 +460,7 @@ export default function App() {
     const previous = historyStack[historyStack.length - 1];
     setRedoStack((prev) => [...prev, JSON.parse(JSON.stringify(project))]);
     setHistoryStack((prev) => prev.slice(0, prev.length - 1));
-    setProject(previous);
+    setProjects(prev => prev.map(p => p.id === previous.id ? previous : p));
   }, [historyStack, project]);
 
   const handleRedo = useCallback(() => {
@@ -309,92 +468,43 @@ export default function App() {
     const next = redoStack[redoStack.length - 1];
     setHistoryStack((prev) => [...prev, JSON.parse(JSON.stringify(project))]);
     setRedoStack((prev) => prev.slice(0, prev.length - 1));
-    setProject(next);
+    setProjects(prev => prev.map(p => p.id === next.id ? next : p));
   }, [redoStack, project]);
 
-  // Current Active Tool & Navigation
+  // Editor Internal Tool
   const [activeTool, setActiveTool] = useState<ToolType>('media');
-  const [selectedClip, setSelectedClip] = useState<{ id: string; type: 'video' | 'audio' | 'text' } | null>({
-    id: 'v_mountain',
-    type: 'video',
-  });
+  const [selectedClip, setSelectedClip] = useState<{ id: string; type: 'video' | 'audio' | 'text' } | null>(
+    project.videoClips[0] ? { id: project.videoClips[0].id, type: 'video' } : null
+  );
 
   // Playback State
-  const [currentTime, setCurrentTime] = useState(24);
+  const [currentTime, setCurrentTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
 
   // Modals
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
 
-  // Keyboard Shortcuts Listener
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement;
-      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
-        return;
-      }
-
-      if (e.code === 'Space') {
-        e.preventDefault();
-        setIsPlaying((prev) => !prev);
-      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
-        e.preventDefault();
-        if (e.shiftKey) handleRedo();
-        else handleUndo();
-      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
-        e.preventDefault();
-        handleRedo();
-      } else if (e.key === 's' || e.key === 'S' || ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b')) {
-        e.preventDefault();
-        handleSplitClip();
-      } else if (e.key === 'Delete' || e.key === 'Backspace') {
-        e.preventDefault();
-        handleDeleteClip();
-      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'd') {
-        e.preventDefault();
-        handleDuplicateClip();
-      } else if (e.key === '?') {
-        setIsShortcutsOpen(true);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleUndo, handleRedo]);
-
-  // Clip Selection Helpers
-  const activeVideoClip = selectedClip?.type === 'video' 
-    ? project.videoClips.find(c => c.id === selectedClip.id) 
-    : null;
-
-  const activeAudioClip = selectedClip?.type === 'audio' 
-    ? project.audioClips.find(c => c.id === selectedClip.id) 
-    : null;
-
-  const activeTextClip = selectedClip?.type === 'text' 
-    ? project.textClips.find(c => c.id === selectedClip.id) 
-    : null;
-
-  // Project Mutations with History
-  const updateProject = (mutator: (prev: Project) => Project) => {
+  // Project Mutations
+  const updateCurrentProject = (mutator: (prev: Project) => Project) => {
     recordHistory(project);
-    setProject((prev) => mutator(prev));
+    const updated = mutator(project);
+    setProjects(prev => prev.map(p => p.id === updated.id ? updated : p));
   };
 
   const handleUpdateVideoClips = (clips: VideoClip[]) => {
-    updateProject(prev => ({ ...prev, videoClips: clips }));
+    updateCurrentProject(prev => ({ ...prev, videoClips: clips }));
   };
 
   const handleUpdateAudioClips = (clips: AudioClip[]) => {
-    updateProject(prev => ({ ...prev, audioClips: clips }));
+    updateCurrentProject(prev => ({ ...prev, audioClips: clips }));
   };
 
   const handleUpdateTextClips = (clips: TextClip[]) => {
-    updateProject(prev => ({ ...prev, textClips: clips }));
+    updateCurrentProject(prev => ({ ...prev, textClips: clips }));
   };
 
-  // Split Clip Action
+  // Split Clip
   const handleSplitClip = () => {
     if (!selectedClip) return;
     const { id, type } = selectedClip;
@@ -422,7 +532,7 @@ export default function App() {
     }
   };
 
-  // Delete Clip Action
+  // Delete Clip
   const handleDeleteClip = () => {
     if (!selectedClip) return;
     const { id, type } = selectedClip;
@@ -437,7 +547,7 @@ export default function App() {
     setSelectedClip(null);
   };
 
-  // Duplicate Clip Action
+  // Duplicate Clip
   const handleDuplicateClip = () => {
     if (!selectedClip) return;
     const { id, type } = selectedClip;
@@ -514,7 +624,7 @@ export default function App() {
     }
   };
 
-  // File Upload Handler
+  // File Upload
   const handleImportFiles = (fileList: FileList) => {
     const newAssets: MediaAsset[] = [];
     Array.from(fileList).forEach((file) => {
@@ -540,195 +650,380 @@ export default function App() {
     setAssets((prev) => [...newAssets, ...prev]);
   };
 
+  const handleSelectProjectAndEdit = (projectId: string) => {
+    setCurrentProjectId(projectId);
+    const p = projects.find(item => item.id === projectId);
+    if (p && p.videoClips[0]) {
+      setSelectedClip({ id: p.videoClips[0].id, type: 'video' });
+    }
+    setActiveMainTab('editor');
+  };
+
+  // Keyboard Shortcuts Listener
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
+        return;
+      }
+
+      if (e.code === 'Space') {
+        e.preventDefault();
+        setIsPlaying((prev) => !prev);
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+        e.preventDefault();
+        if (e.shiftKey) handleRedo();
+        else handleUndo();
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+        e.preventDefault();
+        handleRedo();
+      } else if (e.key === 's' || e.key === 'S' || ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b')) {
+        e.preventDefault();
+        handleSplitClip();
+      } else if (e.key === 'Delete' || e.key === 'Backspace') {
+        e.preventDefault();
+        handleDeleteClip();
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'd') {
+        e.preventDefault();
+        handleDuplicateClip();
+      } else if (e.key === '?') {
+        setIsShortcutsOpen(true);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleUndo, handleRedo]);
+
+  const activeVideoClip = selectedClip?.type === 'video' 
+    ? project.videoClips.find(c => c.id === selectedClip.id) 
+    : null;
+
+  const activeAudioClip = selectedClip?.type === 'audio' 
+    ? project.audioClips.find(c => c.id === selectedClip.id) 
+    : null;
+
+  const activeTextClip = selectedClip?.type === 'text' 
+    ? project.textClips.find(c => c.id === selectedClip.id) 
+    : null;
+
   return (
     <div className="h-screen w-screen flex flex-col bg-[#050712] text-[#F8FAFC] overflow-hidden select-none font-sans">
       
-      {/* 1. Top Navigation Bar */}
-      <TopNav
-        project={project}
-        onUpdateProjectName={(name) => updateProject(prev => ({ ...prev, name }))}
-        onUpdateResolution={(res) => updateProject(prev => ({ ...prev, resolution: res }))}
-        onUpdateFps={(fps) => updateProject(prev => ({ ...prev, fps }))}
-        onUndo={handleUndo}
-        onRedo={handleRedo}
-        canUndo={historyStack.length > 0}
-        canRedo={redoStack.length > 0}
-        onOpenExport={() => setIsExportOpen(true)}
-        onOpenShortcuts={() => setIsShortcutsOpen(true)}
-      />
+      {/* If Home / Dashboard view is active */}
+      {activeMainTab !== 'editor' ? (
+        <div className="flex-1 flex flex-col overflow-hidden">
+          
+          {/* Top Bar for Dashboard View */}
+          <header className="h-16 bg-[#090D1C] border-b border-white/8 px-6 flex items-center justify-between z-20 shrink-0">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#7C3AED] via-[#6366F1] to-[#3B82F6] p-[1.5px] shadow-lg shadow-purple-900/40 flex items-center justify-center">
+                <div className="w-full h-full bg-[#090D1C] rounded-[10px] flex items-center justify-center">
+                  <svg viewBox="0 0 24 24" className="w-5 h-5 fill-none stroke-current text-white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 4l8 16 8-16" className="text-white" />
+                    <path d="M12 20l3-6h-6l3 6" className="text-[#38BDF8]" fill="#38BDF8" />
+                  </svg>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-black tracking-tight text-white">VEdit</span>
+                <span className="px-2 py-0.5 text-[10.5px] font-black uppercase tracking-wider rounded bg-[#7C3AED]/20 text-[#A78BFA] border border-[#7C3AED]/40">
+                  Pro Suite
+                </span>
+              </div>
+            </div>
 
-      {/* 2. Main Middle Workspace: Toolbar + Drawer + Preview + Inspector */}
-      <div className="flex-1 flex overflow-hidden">
-        
-        {/* Left Toolbar (Dock) */}
-        <LeftToolbar
-          activeTool={activeTool}
-          onSelectTool={setActiveTool}
-        />
+            {/* Nav Tabs */}
+            <div className="hidden md:flex items-center gap-1 bg-[#0D1224] p-1 rounded-xl border border-white/8">
+              <button
+                onClick={() => setActiveMainTab('home')}
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  activeMainTab === 'home' ? 'bg-[#7C3AED] text-white shadow-md' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Home
+              </button>
+              <button
+                onClick={() => setActiveMainTab('templates')}
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  activeMainTab === 'templates' ? 'bg-[#7C3AED] text-white shadow-md' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Templates
+              </button>
+              <button
+                onClick={() => setActiveMainTab('editor')}
+                className="px-4 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all cursor-pointer flex items-center gap-1.5"
+              >
+                <Sliders className="w-3.5 h-3.5 text-[#38BDF8]" />
+                <span>Open Project Editor</span>
+              </button>
+            </div>
 
-        {/* Left Tool Drawer Panel */}
-        {activeTool === 'media' && (
-          <MediaPanel
-            assets={assets}
-            onAddAssetToTimeline={handleAddAssetToTimeline}
-            onImportFiles={handleImportFiles}
-            onDeleteAsset={(id) => setAssets(prev => prev.filter(a => a.id !== id))}
-            onToggleFavorite={(id) => setAssets(prev => prev.map(a => a.id === id ? { ...a, favorite: !a.favorite } : a))}
-          />
-        )}
-        {activeTool === 'audio' && (
-          <AudioLibrary
-            onAddAudioClip={(clip) => {
-              const newClip: AudioClip = { ...clip, id: `a_${Date.now()}` };
-              handleUpdateAudioClips([...project.audioClips, newClip]);
-            }}
-          />
-        )}
-        {activeTool === 'text' && (
-          <TextLibrary
-            onAddTextClip={(clip) => {
-              const newClip: TextClip = { ...clip, id: `t_${Date.now()}` };
-              handleUpdateTextClips([...project.textClips, newClip]);
-            }}
-          />
-        )}
-        {activeTool === 'elements' && (
-          <ElementsLibrary
-            onAddElement={(clip) => {
-              const newClip: TextClip = { ...clip, id: `el_${Date.now()}` };
-              handleUpdateTextClips([...project.textClips, newClip]);
-            }}
-          />
-        )}
-        {activeTool === 'transitions' && (
-          <TransitionsLibrary
-            onSelectTransition={(type) => {
-              if (project.videoClips.length >= 2) {
-                const newTrans = {
-                  id: `trans_${Date.now()}`,
-                  atTime: currentTime,
-                  type,
-                  duration: 0.8,
-                  fromClipId: project.videoClips[0].id,
-                  toClipId: project.videoClips[1].id,
+            {/* Action buttons */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setActiveMainTab('editor')}
+                className="btn-vedit-primary px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer shadow-xl active:scale-95 transition-all"
+              >
+                <Plus className="w-4 h-4" />
+                <span>New Project</span>
+              </button>
+            </div>
+          </header>
+
+          {/* Scrollable Dashboard Body */}
+          <div className="flex-1 overflow-y-auto">
+            <Dashboard
+              projects={projects}
+              activeProjectId={currentProjectId}
+              onSelectProject={handleSelectProjectAndEdit}
+              onLaunchEditor={() => setActiveMainTab('editor')}
+              onAddVideoClip={() => {
+                handleSelectProjectAndEdit(currentProjectId);
+              }}
+              onUploadVideoFile={(file) => {
+                const url = URL.createObjectURL(file);
+                const newAsset: MediaAsset = {
+                  id: `asset_${Date.now()}`,
+                  name: file.name,
+                  type: 'video',
+                  url,
+                  thumbnailUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500&auto=format&fit=crop&q=80',
+                  duration: 20,
+                  format: file.name.split('.').pop()?.toUpperCase() || 'MP4',
                 };
-                updateProject(prev => ({ ...prev, transitions: [...prev.transitions, newTrans] }));
-              }
-            }}
-          />
-        )}
-        {activeTool === 'effects' && (
-          <EffectsLibrary
-            onApplyEffect={(effect) => {
-              if (activeVideoClip) {
-                handleUpdateVideoClips(project.videoClips.map(c => c.id === activeVideoClip.id ? { ...c, effect } : c));
-              }
-            }}
-          />
-        )}
-        {activeTool === 'filters' && (
-          <FiltersLibrary
-            activeFilter={activeVideoClip?.colorGrading?.filterPreset || 'none'}
-            onSelectFilter={(preset) => {
-              if (activeVideoClip) {
-                const newCg = { ...activeVideoClip.colorGrading, filterPreset: preset };
-                handleUpdateVideoClips(project.videoClips.map(c => c.id === activeVideoClip.id ? { ...c, colorGrading: newCg } : c));
-              }
-            }}
-          />
-        )}
-        {activeTool === 'captions' && (
-          <CaptionsPanel
-            captions={project.captions || []}
-            onAddCaption={(cap) => updateProject(prev => ({ ...prev, captions: [...(prev.captions || []), cap] }))}
-            onUpdateCaption={(id, text) => updateProject(prev => ({
-              ...prev,
-              captions: (prev.captions || []).map(c => c.id === id ? { ...c, text } : c)
-            }))}
-            onDeleteCaption={(id) => updateProject(prev => ({
-              ...prev,
-              captions: (prev.captions || []).filter(c => c.id !== id)
-            }))}
-            onAutoGenerateCaptions={() => {
-              updateProject(prev => ({
-                ...prev,
-                captions: [
-                  { id: 'c1', startTime: 0, endTime: 4.5, text: 'Welcome to VEdit Pro video suite.' },
-                  { id: 'c2', startTime: 5, endTime: 10, text: 'Experience smooth 60FPS timeline editing.' },
-                ]
-              }));
-            }}
-          />
-        )}
-        {activeTool === 'templates' && (
-          <TemplatesPanel
-            currentProjectId={project.id}
-            onSelectTemplate={(id) => {
-              // Load template
-              setProject({ ...DEMO_PROJECT, id, name: id === 'proj_01' ? 'Project 01 - Cinematic Journey' : 'Cyberpunk Tokyo Nights' });
-            }}
-          />
-        )}
-        {activeTool === 'settings' && (
-          <SettingsPanel
-            project={project}
-            onClearCache={() => {}}
-          />
-        )}
+                setAssets(prev => [newAsset, ...prev]);
+                handleSelectProjectAndEdit(currentProjectId);
+              }}
+            />
+          </div>
 
-        {/* Center: Video Preview */}
-        <div className="flex-1 p-3 flex flex-col overflow-hidden bg-[#050712]">
-          <VideoPreview
+        </div>
+      ) : (
+        /* VEdit Pro Dedicated Project Editor Workspace */
+        <div className="flex-1 flex flex-col overflow-hidden">
+          
+          {/* 1. Top Navigation Bar */}
+          <TopNav
+            project={project}
+            onUpdateProjectName={(name) => updateCurrentProject(prev => ({ ...prev, name }))}
+            onUpdateResolution={(res) => updateCurrentProject(prev => ({ ...prev, resolution: res }))}
+            onUpdateFps={(fps) => updateCurrentProject(prev => ({ ...prev, fps }))}
+            onUndo={handleUndo}
+            onRedo={handleRedo}
+            canUndo={historyStack.length > 0}
+            canRedo={redoStack.length > 0}
+            onOpenExport={() => setIsExportOpen(true)}
+            onOpenShortcuts={() => setIsShortcutsOpen(true)}
+            onGoHome={() => setActiveMainTab('home')}
+          />
+
+          {/* 2. Main Middle Workspace: Left Toolbar + Drawer + Video Preview + Inspector */}
+          <div className="flex-1 flex overflow-hidden">
+            
+            {/* Left Vertical Dock */}
+            <LeftToolbar
+              activeTool={activeTool}
+              onSelectTool={setActiveTool}
+            />
+
+            {/* Tool Drawer Panel */}
+            {activeTool === 'media' && (
+              <MediaPanel
+                assets={assets}
+                onAddAssetToTimeline={handleAddAssetToTimeline}
+                onImportFiles={handleImportFiles}
+                onDeleteAsset={(id) => setAssets(prev => prev.filter(a => a.id !== id))}
+                onToggleFavorite={(id) => setAssets(prev => prev.map(a => a.id === id ? { ...a, favorite: !a.favorite } : a))}
+              />
+            )}
+            {activeTool === 'audio' && (
+              <AudioLibrary
+                onAddAudioClip={(clip) => {
+                  const newClip: AudioClip = { ...clip, id: `a_${Date.now()}` };
+                  handleUpdateAudioClips([...project.audioClips, newClip]);
+                }}
+              />
+            )}
+            {activeTool === 'text' && (
+              <TextLibrary
+                onAddTextClip={(clip) => {
+                  const newClip: TextClip = { ...clip, id: `t_${Date.now()}` };
+                  handleUpdateTextClips([...project.textClips, newClip]);
+                }}
+              />
+            )}
+            {activeTool === 'elements' && (
+              <ElementsLibrary
+                onAddElement={(clip) => {
+                  const newClip: TextClip = { ...clip, id: `el_${Date.now()}` };
+                  handleUpdateTextClips([...project.textClips, newClip]);
+                }}
+              />
+            )}
+            {activeTool === 'transitions' && (
+              <TransitionsLibrary
+                onSelectTransition={(type) => {
+                  if (project.videoClips.length >= 2) {
+                    const newTrans = {
+                      id: `trans_${Date.now()}`,
+                      atTime: currentTime,
+                      type,
+                      duration: 0.8,
+                      fromClipId: project.videoClips[0].id,
+                      toClipId: project.videoClips[1].id,
+                    };
+                    updateCurrentProject(prev => ({ ...prev, transitions: [...prev.transitions, newTrans] }));
+                  }
+                }}
+              />
+            )}
+            {activeTool === 'effects' && (
+              <EffectsLibrary
+                onApplyEffect={(effect) => {
+                  if (activeVideoClip) {
+                    handleUpdateVideoClips(project.videoClips.map(c => c.id === activeVideoClip.id ? { ...c, effect } : c));
+                  }
+                }}
+              />
+            )}
+            {activeTool === 'filters' && (
+              <FiltersLibrary
+                activeFilter={activeVideoClip?.colorGrading?.filterPreset || 'none'}
+                onSelectFilter={(preset) => {
+                  if (activeVideoClip) {
+                    const newCg = { ...activeVideoClip.colorGrading, filterPreset: preset };
+                    handleUpdateVideoClips(project.videoClips.map(c => c.id === activeVideoClip.id ? { ...c, colorGrading: newCg } : c));
+                  }
+                }}
+              />
+            )}
+            {activeTool === 'captions' && (
+              <CaptionsPanel
+                captions={project.captions || []}
+                onAddCaption={(cap) => updateCurrentProject(prev => ({ ...prev, captions: [...(prev.captions || []), cap] }))}
+                onUpdateCaption={(id, text) => updateCurrentProject(prev => ({
+                  ...prev,
+                  captions: (prev.captions || []).map(c => c.id === id ? { ...c, text } : c)
+                }))}
+                onDeleteCaption={(id) => updateCurrentProject(prev => ({
+                  ...prev,
+                  captions: (prev.captions || []).filter(c => c.id !== id)
+                }))}
+                onAutoGenerateCaptions={() => {
+                  updateCurrentProject(prev => ({
+                    ...prev,
+                    captions: [
+                      { id: 'c1', startTime: 0, endTime: 4.5, text: 'Welcome to VEdit Pro video suite.' },
+                      { id: 'c2', startTime: 5, endTime: 10, text: 'Experience smooth 60FPS timeline editing.' },
+                    ]
+                  }));
+                }}
+              />
+            )}
+            {activeTool === 'templates' && (
+              <TemplatesPanel
+                currentProjectId={project.id}
+                onSelectTemplate={(id) => {
+                  handleSelectProjectAndEdit(id);
+                }}
+              />
+            )}
+            {activeTool === 'settings' && (
+              <SettingsPanel
+                project={project}
+                onClearCache={() => {}}
+              />
+            )}
+
+            {/* Center: Video Preview */}
+            <div className="flex-1 p-3 flex flex-col overflow-hidden bg-[#050712]">
+              <VideoPreview
+                project={project}
+                currentTime={currentTime}
+                isPlaying={isPlaying}
+                onTimeUpdate={setCurrentTime}
+                onTogglePlay={setIsPlaying}
+                aspectRatio={project.aspectRatio}
+                onChangeAspectRatio={(ratio) => updateCurrentProject(prev => ({ ...prev, aspectRatio: ratio }))}
+              />
+            </div>
+
+            {/* Right: Inspector Panel */}
+            <InspectorPanel
+              selectedVideoClip={activeVideoClip}
+              selectedAudioClip={activeAudioClip}
+              selectedTextClip={activeTextClip}
+              onUpdateVideoClip={(updated) => handleUpdateVideoClips(project.videoClips.map(c => c.id === updated.id ? updated : c))}
+              onUpdateAudioClip={(updated) => handleUpdateAudioClips(project.audioClips.map(c => c.id === updated.id ? updated : c))}
+              onUpdateTextClip={(updated) => handleUpdateTextClips(project.textClips.map(c => c.id === updated.id ? updated : c))}
+            />
+
+          </div>
+
+          {/* 3. Bottom Multi-Track Timeline */}
+          <Timeline
             project={project}
             currentTime={currentTime}
-            isPlaying={isPlaying}
             onTimeUpdate={setCurrentTime}
-            onTogglePlay={setIsPlaying}
-            aspectRatio={project.aspectRatio}
-            onChangeAspectRatio={(ratio) => updateProject(prev => ({ ...prev, aspectRatio: ratio }))}
+            selectedClipId={selectedClip?.id || null}
+            selectedClipType={selectedClip?.type || null}
+            onSelectClip={(id, type) => setSelectedClip(id ? { id, type } : null)}
+            onUpdateVideoClips={handleUpdateVideoClips}
+            onUpdateAudioClips={handleUpdateAudioClips}
+            onUpdateTextClips={handleUpdateTextClips}
+            onSplitClip={handleSplitClip}
+            onDeleteClip={handleDeleteClip}
+            onDuplicateClip={handleDuplicateClip}
+            onUndo={handleUndo}
+            onRedo={handleRedo}
+            canUndo={historyStack.length > 0}
+            canRedo={redoStack.length > 0}
           />
+
         </div>
+      )}
 
-        {/* Right: Inspector Panel */}
-        <InspectorPanel
-          selectedVideoClip={activeVideoClip}
-          selectedAudioClip={activeAudioClip}
-          selectedTextClip={activeTextClip}
-          onUpdateVideoClip={(updated) => handleUpdateVideoClips(project.videoClips.map(c => c.id === updated.id ? updated : c))}
-          onUpdateAudioClip={(updated) => handleUpdateAudioClips(project.audioClips.map(c => c.id === updated.id ? updated : c))}
-          onUpdateTextClip={(updated) => handleUpdateTextClips(project.textClips.map(c => c.id === updated.id ? updated : c))}
-        />
+      {/* Floating Mobile Bottom Navigation Bar */}
+      <nav className="fixed bottom-3 left-4 right-4 z-40 md:hidden bg-[#090D1C]/90 backdrop-blur-2xl border border-white/10 rounded-2xl px-3 py-2 flex items-center justify-around shadow-2xl shadow-black/80">
+        <button
+          onClick={() => setActiveMainTab('home')}
+          className={`flex flex-col items-center gap-1 transition-all ${
+            activeMainTab === 'home' ? 'text-[#A78BFA] font-bold scale-105' : 'text-slate-400 hover:text-white'
+          }`}
+        >
+          <Home className="w-4 h-4" />
+          <span className="text-[9px]">Home</span>
+        </button>
 
-      </div>
+        <button
+          onClick={() => setActiveMainTab('editor')}
+          className={`flex flex-col items-center gap-1 transition-all ${
+            activeMainTab === 'editor' ? 'text-[#A78BFA] font-bold scale-105' : 'text-slate-400 hover:text-white'
+          }`}
+        >
+          <Sliders className="w-4 h-4" />
+          <span className="text-[9px]">Editor</span>
+        </button>
 
-      {/* 3. Bottom Multi-Track Timeline */}
-      <Timeline
-        project={project}
-        currentTime={currentTime}
-        onTimeUpdate={setCurrentTime}
-        selectedClipId={selectedClip?.id || null}
-        selectedClipType={selectedClip?.type || null}
-        onSelectClip={(id, type) => setSelectedClip(id ? { id, type } : null)}
-        onUpdateVideoClips={handleUpdateVideoClips}
-        onUpdateAudioClips={handleUpdateAudioClips}
-        onUpdateTextClips={handleUpdateTextClips}
-        onSplitClip={handleSplitClip}
-        onDeleteClip={handleDeleteClip}
-        onDuplicateClip={handleDuplicateClip}
-        onUndo={handleUndo}
-        onRedo={handleRedo}
-        canUndo={historyStack.length > 0}
-        canRedo={redoStack.length > 0}
-      />
+        <button
+          onClick={() => setIsExportOpen(true)}
+          className="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-all"
+        >
+          <Download className="w-4 h-4 text-[#38BDF8]" />
+          <span className="text-[9px]">Export</span>
+        </button>
+      </nav>
 
-      {/* 4. Export Master Modal */}
+      {/* Export Master Modal */}
       <ExportModal
         project={project}
         isOpen={isExportOpen}
         onClose={() => setIsExportOpen(false)}
       />
 
-      {/* 5. Keyboard Shortcuts Cheat Sheet */}
+      {/* Keyboard Shortcuts Cheat Sheet */}
       <ShortcutsModal
         isOpen={isShortcutsOpen}
         onClose={() => setIsShortcutsOpen(false)}

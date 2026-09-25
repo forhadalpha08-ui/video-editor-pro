@@ -891,14 +891,46 @@ export default function Dashboard({
 
       </div>
 
-      {/* 6. EDIT ANYWHERE LAPTOP FOOTER BANNER MATCHING MOCKUP */}
+      {/* 6. MOBILE-ONLY COSMIC PLANET CAPSULE (Matches Mockup left sidebar on mobile screen) */}
+      <div className="flex md:hidden flex-col items-center gap-3 p-6 sidebar-capsule text-center relative overflow-hidden">
+        <div className="relative w-28 h-28 mx-auto rounded-full overflow-hidden flex items-center justify-center shadow-2xl">
+          <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#020108] via-[#4d0c7b] to-[#ea00d9] shadow-[inset_-8px_-8px_24px_rgba(0,0,0,0.95),_0_0_30px_rgba(234,0,217,0.5)]" />
+          <div className="absolute inset-0 rounded-full opacity-55 mix-blend-screen bg-cover animate-planet-clouds" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?auto=format&fit=crop&w=300&q=50')" }} />
+          <div className="absolute w-40 h-3 border-t-2 border-b-2 border-indigo-400/50 rounded-full rotate-[-12deg] scale-y-[0.25] blur-[0.5px] pointer-events-none" />
+        </div>
+
+        <div className="flex flex-col gap-0.5 mt-1">
+          <h4 className="text-base font-extrabold text-white leading-tight">
+            Create <br />
+            <span className="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">Edit</span> <br />
+            Inspire
+          </h4>
+          <span className="text-[10px] text-slate-400 leading-normal max-w-xs mt-1">
+            Professional video editing tools for creators, by creators.
+          </span>
+        </div>
+
+        <button 
+          onClick={() => onOpenInstallModal && onOpenInstallModal()}
+          className="w-full max-w-xs py-3 btn-cosmic-primary text-xs font-extrabold rounded-2xl flex items-center justify-center gap-1.5 cursor-pointer shadow-lg mt-1"
+        >
+          <Crown className="w-3.5 h-3.5 text-yellow-300 fill-yellow-300" />
+          <span>Upgrade to Pro</span>
+        </button>
+
+        <span className="text-[9px] text-slate-500 font-mono tracking-wide select-none">
+          v2.8.0
+        </span>
+      </div>
+
+      {/* 7. EDIT ANYWHERE LAPTOP FOOTER BANNER MATCHING MOCKUP */}
       <div className="relative overflow-hidden bg-gradient-to-r from-[#050711] via-[#090e24] to-[#050711] border border-slate-850 rounded-[28px] p-6 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
-        <div className="flex flex-col gap-2 z-10">
+        <div className="flex flex-col gap-2 z-10 text-center md:text-left">
           <h3 className="text-base font-extrabold text-white">Edit Anywhere</h3>
           <p className="text-xs text-slate-400 max-w-xs leading-relaxed">
             Your projects, always with you. On any device, anytime.
           </p>
-          <div className="flex items-center gap-3 text-slate-400 mt-2">
+          <div className="flex items-center justify-center md:justify-start gap-3 text-slate-400 mt-2">
             <Monitor className="w-4 h-4 hover:text-white transition-colors cursor-pointer" />
             <Apple className="w-4 h-4 hover:text-white transition-colors cursor-pointer" />
             <Smartphone className="w-4 h-4 hover:text-white transition-colors cursor-pointer" />

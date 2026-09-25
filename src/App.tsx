@@ -35,6 +35,7 @@ import ExportModal from './components/ExportModal';
 import InstallModal from './components/InstallModal';
 import Dashboard from './components/Dashboard';
 import UserProfileModal from './components/UserProfileModal';
+import { getAssetUrl } from './utils/assetUrl';
 
 export default function App() {
   // Device layout viewer choices: 'mobile' | 'tablet' | 'desktop'
@@ -256,17 +257,17 @@ export default function App() {
     };
 
     const videoUrls: Record<ProceduralType, string> = {
-      vaporwave_sunset: '/2.mp4',
-      cyberpunk_grid: '/1.mp4',
-      geometric_warp: '/3.mp4',
-      nebula_ocean: '/12.mp4',
+      vaporwave_sunset: getAssetUrl('2.mp4'),
+      cyberpunk_grid: getAssetUrl('1.mp4'),
+      geometric_warp: getAssetUrl('3.mp4'),
+      nebula_ocean: getAssetUrl('12.mp4'),
     };
 
     const thumbnailUrls: Record<ProceduralType, string> = {
-      vaporwave_sunset: '/bg2.png',
-      cyberpunk_grid: '/bg99.png',
-      geometric_warp: '/bg2-1.png',
-      nebula_ocean: '/bg2.png',
+      vaporwave_sunset: getAssetUrl('bg2.png'),
+      cyberpunk_grid: getAssetUrl('bg99.png'),
+      geometric_warp: getAssetUrl('bg2-1.png'),
+      nebula_ocean: getAssetUrl('bg2.png'),
     };
 
     const newVideo: VideoClip = {
@@ -547,7 +548,7 @@ export default function App() {
             colorGrading: createDefaultGrading(),
             volume: 100,
             videoUrl: videoUrl,
-            thumbnailUrl: isImage ? videoUrl : '/bg2.png',
+            thumbnailUrl: isImage ? videoUrl : getAssetUrl('bg2.png'),
           },
         ],
         audioClips: [
@@ -610,13 +611,13 @@ export default function App() {
         {/* Starry deep space background layer */}
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-screen" 
-          style={{ backgroundImage: "url('/bg99.png')" }} 
+          style={{ backgroundImage: `url('${getAssetUrl('bg99.png')}')` }} 
         />
         {/* Glowing Planet Earth / Cosmic sphere in top right */}
         <div 
           className="absolute -top-[15%] -right-[15%] w-[850px] h-[850px] rounded-full bg-cover bg-center opacity-[0.22] mix-blend-screen filter blur-[0.5px] animate-pulse" 
           style={{ 
-            backgroundImage: "url('/bg2.png')",
+            backgroundImage: `url('${getAssetUrl('bg2.png')}')`,
             boxShadow: '0 0 120px rgba(139, 92, 246, 0.25), inset 0 0 100px rgba(0, 0, 0, 0.9)'
           }} 
         />
@@ -633,11 +634,11 @@ export default function App() {
         <div className="flex items-center gap-2.5">
           <div className="w-9 h-9 shrink-0 relative flex items-center justify-center">
             <img
-              src="/logo.png"
+              src={getAssetUrl('logo.png')}
               alt="VidoEdit Pro"
               className="w-full h-full object-contain filter drop-shadow-[0_0_15px_rgba(56,189,248,0.8)]"
               onError={(e) => {
-                e.currentTarget.src = '/logo.svg';
+                e.currentTarget.src = getAssetUrl('logo.svg');
               }}
             />
           </div>
@@ -665,11 +666,11 @@ export default function App() {
             className="w-7 h-7 rounded-full border border-cyan-400 p-0.5 shadow-[0_0_10px_rgba(34,211,238,0.5)] shrink-0 overflow-hidden bg-slate-900 cursor-pointer"
           >
             <img
-              src="/logo.png"
+              src={getAssetUrl('logo.png')}
               alt="Profile"
               className="w-full h-full object-cover rounded-full"
               onError={(e) => {
-                e.currentTarget.src = '/logomax.png';
+                e.currentTarget.src = getAssetUrl('logomax.png');
               }}
             />
           </button>
@@ -700,11 +701,11 @@ export default function App() {
                 <div className="flex items-center gap-2.5">
                   <div className="w-10 h-10 shrink-0 relative flex items-center justify-center">
                     <img
-                      src="/logo.png"
+                      src={getAssetUrl('logo.png')}
                       alt="Logo"
                       className="w-full h-full object-contain filter drop-shadow-[0_0_15px_rgba(56,189,248,0.8)]"
                       onError={(e) => {
-                        e.currentTarget.src = '/logo.svg';
+                        e.currentTarget.src = getAssetUrl('logo.svg');
                       }}
                     />
                   </div>
@@ -836,7 +837,7 @@ export default function App() {
               {/* Mini Cosmic planet sphere */}
               <div className="relative w-24 h-24 mx-auto rounded-full overflow-hidden flex items-center justify-center shadow-xl">
                 <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#020108] via-[#4d0c7b] to-[#ea00d9] shadow-[inset_-6px_-6px_20px_rgba(0,0,0,0.95),_0_0_25px_rgba(234,0,217,0.4)]" />
-                <div className="absolute inset-0 rounded-full opacity-60 mix-blend-screen bg-cover animate-planet-clouds" style={{ backgroundImage: "url('/bg2.png')" }} />
+                <div className="absolute inset-0 rounded-full opacity-60 mix-blend-screen bg-cover animate-planet-clouds" style={{ backgroundImage: `url('${getAssetUrl('bg2.png')}')` }} />
               </div>
 
               <div className="flex flex-col gap-0.5 text-left">
@@ -877,11 +878,11 @@ export default function App() {
           <div className="flex flex-col items-center justify-center text-center gap-2 select-none pt-1">
             <div className="w-14 h-14 shrink-0 relative flex items-center justify-center group cursor-pointer">
               <img
-                src="/logo.png"
+                src={getAssetUrl('logo.png')}
                 alt="VidoEdit Pro"
                 className="w-full h-full object-contain filter drop-shadow-[0_0_20px_rgba(56,189,248,0.75)] drop-shadow-[0_0_35px_rgba(168,85,247,0.5)] group-hover:scale-105 transition-transform"
                 onError={(e) => {
-                  e.currentTarget.src = '/logo.svg';
+                  e.currentTarget.src = getAssetUrl('logo.svg');
                 }}
               />
             </div>
@@ -985,7 +986,7 @@ export default function App() {
           {/* Cosmic planet sphere */}
           <div className="relative w-36 h-36 mx-auto rounded-full overflow-hidden flex items-center justify-center group cursor-pointer shadow-2xl">
             <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#020108] via-[#4d0c7b] to-[#ea00d9] shadow-[inset_-10px_-10px_30px_rgba(0,0,0,0.95),_0_0_35px_rgba(234,0,217,0.5)]" />
-            <div className="absolute inset-0 rounded-full opacity-60 mix-blend-screen bg-cover animate-planet-clouds" style={{ backgroundImage: "url('/bg2.png')" }} />
+            <div className="absolute inset-0 rounded-full opacity-60 mix-blend-screen bg-cover animate-planet-clouds" style={{ backgroundImage: `url('${getAssetUrl('bg2.png')}')` }} />
             <div className="absolute w-52 h-4 border-t-2 border-b-2 border-indigo-400/50 rounded-full rotate-[-12deg] scale-y-[0.25] blur-[0.5px] pointer-events-none" />
           </div>
           
@@ -1072,7 +1073,7 @@ export default function App() {
                 className="w-8 h-8 rounded-full border border-indigo-500/50 overflow-hidden cursor-pointer hover:ring-2 hover:ring-cyan-400 transition-all p-0.5"
                 title="Profile Settings"
               >
-                <img src="/logo.png" alt="Profile" className="w-full h-full object-cover rounded-full" onError={(e) => { e.currentTarget.src = '/logomax.png'; }} />
+                <img src={getAssetUrl('logo.png')} alt="Profile" className="w-full h-full object-cover rounded-full" onError={(e) => { e.currentTarget.src = getAssetUrl('logomax.png'); }} />
               </button>
 
               <button

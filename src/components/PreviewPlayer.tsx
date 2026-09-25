@@ -3,6 +3,7 @@ import { Play, Pause, RotateCcw, Volume2, Sun, SkipBack, SkipForward, Sparkles }
 import { Project, VideoClip, TextClip, TimelineTransition, interpolateKeyframes, interpolateSpeedKeyframes } from '../types';
 import { drawClipFrame, drawTextOverlay, drawTransitionFrame, applyVideoEffects, applyChromaKey } from '../utils/proceduralRenderer';
 import { audioSynth } from '../utils/audioSynthesizer';
+import { getAssetUrl } from '../utils/assetUrl';
 
 interface PreviewPlayerProps {
   project: Project;
@@ -91,12 +92,13 @@ export default function PreviewPlayer({
   useEffect(() => {
     project.videoClips.forEach((clip) => {
       if (!clip.videoUrl) return;
+      const mediaSrc = getAssetUrl(clip.videoUrl);
 
       if (isImageMedia(clip.videoUrl)) {
         if (!imageCacheRef.current.has(clip.videoUrl)) {
           const img = new Image();
           img.crossOrigin = 'anonymous';
-          img.src = clip.videoUrl;
+          img.src = mediaSrc;
           img.onload = () => {
             drawFrame();
           };
@@ -108,7 +110,7 @@ export default function PreviewPlayer({
           v.crossOrigin = 'anonymous';
           v.playsInline = true;
           v.preload = 'auto';
-          v.src = clip.videoUrl;
+          v.src = mediaSrc;
           v.addEventListener('timeupdate', () => drawFrame());
           v.addEventListener('loadeddata', () => drawFrame());
           v.addEventListener('seeked', () => drawFrame());

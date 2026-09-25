@@ -17,6 +17,7 @@ import {
   Bell,
   Key
 } from 'lucide-react';
+import { getAssetUrl } from '../utils/assetUrl';
 
 interface UserProfileModalProps {
   isOpen: boolean;
@@ -56,11 +57,11 @@ export default function UserProfileModal({ isOpen, onClose }: UserProfileModalPr
             <div className="relative group">
               <div className="w-14 h-14 rounded-full border-2 border-indigo-400 p-0.5 shadow-xl overflow-hidden bg-slate-900">
                 <img
-                  src="/logomax.png"
+                  src={getAssetUrl('logomax.png')}
                   alt="Avatar"
                   className="w-full h-full object-cover rounded-full"
                   onError={(e) => {
-                    e.currentTarget.src = '/logo.png';
+                    e.currentTarget.src = getAssetUrl('logo.png');
                   }}
                 />
               </div>

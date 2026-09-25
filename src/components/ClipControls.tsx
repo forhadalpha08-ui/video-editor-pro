@@ -10,6 +10,7 @@ import {
   interpolateKeyframes,
   interpolateSpeedKeyframes
 } from '../types';
+import { getAssetUrl } from '../utils/assetUrl';
 import {
   Sliders,
   Video,
@@ -43,18 +44,18 @@ interface ClipControlsProps {
 }
 
 const TEMPLATE_VIDEOS = [
-  { id: '/1.mp4', label: '1.mp4 (Tokyo)' },
-  { id: '/2.mp4', label: '2.mp4 (Alps)' },
-  { id: '/3.mp4', label: '3.mp4 (Drift)' },
-  { id: '/4.mp4', label: '4.mp4 (Tech)' },
-  { id: '/5.mp4', label: '5.mp4 (Sunset)' },
-  { id: '/6.mp4', label: '6.mp4 (Street)' },
-  { id: '/7.mp4', label: '7.mp4 (Studio)' },
-  { id: '/8.mp4', label: '8.mp4 (Action)' },
-  { id: '/9.mp4', label: '9.mp4 (Retro)' },
-  { id: '/10.mp4', label: '10.mp4 (Noir)' },
-  { id: '/11.mp4', label: '11.mp4 (City)' },
-  { id: '/12.mp4', label: '12.mp4 (Space)' },
+  { id: getAssetUrl('1.mp4'), label: '1.mp4 (Tokyo)' },
+  { id: getAssetUrl('2.mp4'), label: '2.mp4 (Alps)' },
+  { id: getAssetUrl('3.mp4'), label: '3.mp4 (Drift)' },
+  { id: getAssetUrl('4.mp4'), label: '4.mp4 (Tech)' },
+  { id: getAssetUrl('5.mp4'), label: '5.mp4 (Sunset)' },
+  { id: getAssetUrl('6.mp4'), label: '6.mp4 (Street)' },
+  { id: getAssetUrl('7.mp4'), label: '7.mp4 (Studio)' },
+  { id: getAssetUrl('8.mp4'), label: '8.mp4 (Action)' },
+  { id: getAssetUrl('9.mp4'), label: '9.mp4 (Retro)' },
+  { id: getAssetUrl('10.mp4'), label: '10.mp4 (Noir)' },
+  { id: getAssetUrl('11.mp4'), label: '11.mp4 (City)' },
+  { id: getAssetUrl('12.mp4'), label: '12.mp4 (Space)' },
 ];
 
 const VIDEO_EFFECTS: { id: VideoEffectType; name: string }[] = [

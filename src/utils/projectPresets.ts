@@ -1,4 +1,5 @@
 import { Project, ColorGradingParams, VideoClip, AudioClip, TextClip, TimelineTransition } from '../types';
+import { getAssetUrl } from './assetUrl';
 
 export const createDefaultGrading = (): ColorGradingParams => ({
   brightness: 0,
@@ -43,8 +44,8 @@ export const projectPresets: Project[] = [
           lut: 'cyberpunk',
         },
         volume: 100,
-        videoUrl: '/1.mp4',
-        thumbnailUrl: '/bg2.png',
+        videoUrl: getAssetUrl('1.mp4'),
+        thumbnailUrl: getAssetUrl('bg2.png'),
         effect: 'cinema_glow',
         keyframes: [
           { id: 'kf1_1', time: 0, opacity: 0, scale: 105, positionX: 50, positionY: 50, rotation: 0 },
@@ -124,8 +125,8 @@ export const projectPresets: Project[] = [
           lut: 'warm_gold',
         },
         volume: 100,
-        videoUrl: '/2.mp4',
-        thumbnailUrl: '/bg2.png',
+        videoUrl: getAssetUrl('2.mp4'),
+        thumbnailUrl: getAssetUrl('bg2.png'),
         aspectRatio: '2.39:1',
       }
     ],
@@ -189,8 +190,8 @@ export const projectPresets: Project[] = [
           lut: 'teal_orange',
         },
         volume: 100,
-        videoUrl: '/3.mp4',
-        thumbnailUrl: '/bg2.png',
+        videoUrl: getAssetUrl('3.mp4'),
+        thumbnailUrl: getAssetUrl('bg2.png'),
         speedKeyframes: [
           { id: 'sk1', time: 0, speed: 1.0 },
           { id: 'sk2', time: 4.0, speed: 0.5 },
@@ -258,8 +259,8 @@ export const projectPresets: Project[] = [
           lut: 'vintage',
         },
         volume: 90,
-        videoUrl: '/4.mp4',
-        thumbnailUrl: '/bg2.png',
+        videoUrl: getAssetUrl('4.mp4'),
+        thumbnailUrl: getAssetUrl('bg2.png'),
       }
     ],
     audioClips: [
@@ -331,8 +332,8 @@ export const projectPresets: Project[] = [
           lut: 'warm_gold',
         },
         volume: 95,
-        videoUrl: '/5.mp4',
-        thumbnailUrl: '/bg2.png',
+        videoUrl: getAssetUrl('5.mp4'),
+        thumbnailUrl: getAssetUrl('bg2.png'),
         aspectRatio: '2.39:1',
         effect: 'anamorphic',
       }
@@ -392,8 +393,8 @@ export const projectPresets: Project[] = [
           lut: 'vintage',
         },
         volume: 90,
-        videoUrl: '/6.mp4',
-        thumbnailUrl: '/bg2.png',
+        videoUrl: getAssetUrl('6.mp4'),
+        thumbnailUrl: getAssetUrl('bg2.png'),
         effect: 'vhs',
       }
     ],
@@ -454,8 +455,8 @@ export const projectPresets: Project[] = [
           lut: 'none',
         },
         volume: 100,
-        videoUrl: '/7.mp4',
-        thumbnailUrl: '/bg2.png',
+        videoUrl: getAssetUrl('7.mp4'),
+        thumbnailUrl: getAssetUrl('bg2.png'),
       }
     ],
     audioClips: [
@@ -514,8 +515,8 @@ export const projectPresets: Project[] = [
           lut: 'teal_orange',
         },
         volume: 100,
-        videoUrl: '/8.mp4',
-        thumbnailUrl: '/bg2.png',
+        videoUrl: getAssetUrl('8.mp4'),
+        thumbnailUrl: getAssetUrl('bg2.png'),
         effect: 'rgb_split',
       }
     ],
@@ -578,8 +579,8 @@ export const projectPresets: Project[] = [
           lut: 'cyberpunk',
         },
         volume: 90,
-        videoUrl: '/9.mp4',
-        thumbnailUrl: '/bg2.png',
+        videoUrl: getAssetUrl('9.mp4'),
+        thumbnailUrl: getAssetUrl('bg2.png'),
         effect: 'vhs',
       }
     ],
@@ -639,8 +640,8 @@ export const projectPresets: Project[] = [
           lut: 'monochrome',
         },
         volume: 85,
-        videoUrl: '/10.mp4',
-        thumbnailUrl: '/bg2.png',
+        videoUrl: getAssetUrl('10.mp4'),
+        thumbnailUrl: getAssetUrl('bg2.png'),
         effect: 'film_grain',
         aspectRatio: '4:3',
       }
@@ -700,8 +701,8 @@ export const projectPresets: Project[] = [
           lut: 'warm_gold',
         },
         volume: 90,
-        videoUrl: '/11.mp4',
-        thumbnailUrl: '/bg2.png',
+        videoUrl: getAssetUrl('11.mp4'),
+        thumbnailUrl: getAssetUrl('bg2.png'),
         effect: 'bloom',
       }
     ],
@@ -761,8 +762,8 @@ export const projectPresets: Project[] = [
           lut: 'cyberpunk',
         },
         volume: 95,
-        videoUrl: '/12.mp4',
-        thumbnailUrl: '/bg2.png',
+        videoUrl: getAssetUrl('12.mp4'),
+        thumbnailUrl: getAssetUrl('bg2.png'),
         effect: 'cinema_glow',
       }
     ],

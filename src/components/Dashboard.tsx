@@ -33,6 +33,7 @@ import {
   Apple
 } from 'lucide-react';
 import { Project, ProceduralType } from '../types';
+import { getAssetUrl } from '../utils/assetUrl';
 
 interface DashboardProps {
   projects: Project[];
@@ -48,7 +49,7 @@ interface DashboardProps {
 // Interactive Video Thumbnail Component that plays real video on hover
 function VideoThumb({ videoFile, className }: { videoFile: string; className?: string }) {
   const videoRef = React.useRef<HTMLVideoElement>(null);
-  const src = videoFile.startsWith('/') ? videoFile : `/${videoFile}`;
+  const src = getAssetUrl(videoFile);
 
   return (
     <video
@@ -329,11 +330,11 @@ export default function Dashboard({
             title="User Profile & Settings"
           >
             <img
-              src="/logo.png"
+              src={getAssetUrl('logo.png')}
               alt="Profile"
               className="w-full h-full object-cover rounded-full"
               onError={(e) => {
-                e.currentTarget.src = '/logomax.png';
+                e.currentTarget.src = getAssetUrl('logomax.png');
               }}
             />
           </button>
@@ -411,7 +412,7 @@ export default function Dashboard({
         <div className="relative w-full lg:w-[460px] aspect-[16/10] rounded-2xl overflow-hidden border border-indigo-500/30 shadow-2xl shadow-indigo-600/20 group">
           {/* Main Background Video Preview */}
           <video
-            src="/1.mp4"
+            src={getAssetUrl('1.mp4')}
             autoPlay
             loop
             muted
@@ -903,7 +904,7 @@ export default function Dashboard({
       <div className="flex md:hidden flex-col items-center gap-3 p-6 sidebar-capsule text-center relative overflow-hidden">
         <div className="relative w-28 h-28 mx-auto rounded-full overflow-hidden flex items-center justify-center shadow-2xl">
           <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#020108] via-[#4d0c7b] to-[#ea00d9] shadow-[inset_-8px_-8px_24px_rgba(0,0,0,0.95),_0_0_30px_rgba(234,0,217,0.5)]" />
-          <div className="absolute inset-0 rounded-full opacity-60 mix-blend-screen bg-cover animate-planet-clouds" style={{ backgroundImage: "url('/bg2.png')" }} />
+          <div className="absolute inset-0 rounded-full opacity-60 mix-blend-screen bg-cover animate-planet-clouds" style={{ backgroundImage: `url('${getAssetUrl('bg2.png')}')` }} />
           <div className="absolute w-40 h-3 border-t-2 border-b-2 border-indigo-400/50 rounded-full rotate-[-12deg] scale-y-[0.25] blur-[0.5px] pointer-events-none" />
         </div>
 
@@ -949,7 +950,7 @@ export default function Dashboard({
         {/* Laptop asset visual wrapper with real video playback */}
         <div className="relative w-full md:w-80 aspect-video rounded-xl overflow-hidden shadow-2xl shrink-0 group border border-slate-800">
           <video
-            src="/1.mp4"
+            src={getAssetUrl('1.mp4')}
             autoPlay
             loop
             muted

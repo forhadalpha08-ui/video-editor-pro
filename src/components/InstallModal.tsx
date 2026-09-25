@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Download, Github, Monitor, Smartphone, Check, Copy, Sparkles, X, Terminal, Globe, ArrowRight, Laptop, ShieldCheck } from 'lucide-react';
+import { getAssetUrl } from '../utils/assetUrl';
 
 interface InstallModalProps {
   onClose: () => void;
@@ -101,7 +102,7 @@ export default function InstallModal({ onClose, deferredPrompt }: InstallModalPr
               <div className="flex items-start gap-3.5">
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 to-pink-600 p-0.5 shrink-0 shadow-lg shadow-indigo-500/20">
                   <div className="w-full h-full bg-[#030408] rounded-[14px] flex items-center justify-center">
-                    <img src="/logo.png" alt="Logo" className="w-7 h-7 object-contain" onError={(e) => { e.currentTarget.src = '/logo.svg'; }} />
+                    <img src={getAssetUrl('logo.png')} alt="Logo" className="w-7 h-7 object-contain" onError={(e) => { e.currentTarget.src = getAssetUrl('logo.svg'); }} />
                   </div>
                 </div>
                 <div className="flex-1 min-w-0">

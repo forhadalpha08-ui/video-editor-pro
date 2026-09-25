@@ -42,6 +42,7 @@ interface DashboardProps {
   onAddVideoClip: (type: ProceduralType) => void;
   onUploadVideoFile?: (file: File) => void;
   onOpenInstallModal?: () => void;
+  onOpenProfileModal?: () => void;
 }
 
 // Interactive Video Thumbnail Component that plays real video on hover
@@ -322,13 +323,20 @@ export default function Dashboard({
           </button>
 
           {/* User profile avatar with circular neon halo ring */}
-          <div className="w-10 h-10 rounded-full border-2 border-indigo-500/60 p-0.5 shadow-lg shadow-indigo-500/20 shrink-0 overflow-hidden bg-slate-900">
+          <button
+            onClick={() => onOpenProfileModal && onOpenProfileModal()}
+            className="w-10 h-10 rounded-full border-2 border-indigo-500/60 p-0.5 shadow-lg shadow-indigo-500/20 shrink-0 overflow-hidden bg-slate-900 cursor-pointer hover:ring-2 hover:ring-cyan-400 hover:scale-105 transition-all"
+            title="User Profile & Settings"
+          >
             <img
-              src="/logomax.png"
+              src="/logo.png"
               alt="Profile"
               className="w-full h-full object-cover rounded-full"
+              onError={(e) => {
+                e.currentTarget.src = '/logomax.png';
+              }}
             />
-          </div>
+          </button>
 
           {/* Install App / GitHub Download Button */}
           <button

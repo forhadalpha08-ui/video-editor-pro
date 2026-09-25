@@ -34,6 +34,7 @@ import TransitionsDrawer from './components/TransitionsDrawer';
 import ExportModal from './components/ExportModal';
 import InstallModal from './components/InstallModal';
 import Dashboard from './components/Dashboard';
+import UserProfileModal from './components/UserProfileModal';
 
 export default function App() {
   // Device layout viewer choices: 'mobile' | 'tablet' | 'desktop'
@@ -47,6 +48,7 @@ export default function App() {
   const [projects, setProjects] = useState<Project[]>(projectPresets);
   const [activeProjectId, setActiveProjectId] = useState<string>('template_1');
   const [showInstallModal, setShowInstallModal] = useState<boolean>(false);
+  const [showProfileModal, setShowProfileModal] = useState<boolean>(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
   useEffect(() => {
@@ -962,10 +964,7 @@ export default function App() {
             </button>
 
             <button
-              onClick={() => {
-                setActiveSidebarTab('editor');
-                setActiveWorkspaceTab('inspector');
-              }}
+              onClick={() => setShowProfileModal(true)}
               className="flex items-center gap-3 px-3.5 py-3 text-xs font-semibold rounded-2xl cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900/40 transition-all"
             >
               <Settings className="w-4 h-4" />
@@ -1063,6 +1062,14 @@ export default function App() {
               </div>
 
               <button
+                onClick={() => setShowProfileModal(true)}
+                className="w-8 h-8 rounded-full border border-indigo-500/50 overflow-hidden cursor-pointer hover:ring-2 hover:ring-cyan-400 transition-all p-0.5"
+                title="Profile Settings"
+              >
+                <img src="/logo.png" alt="Profile" className="w-full h-full object-cover rounded-full" onError={(e) => { e.currentTarget.src = '/logomax.png'; }} />
+              </button>
+
+              <button
                 onClick={() => setShowInstallModal(true)}
                 className="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 border border-indigo-500/30 text-slate-200 hover:text-white text-xs font-bold rounded-xl transition-all shadow-md active:scale-95 flex items-center gap-1.5 cursor-pointer"
               >
@@ -1108,6 +1115,7 @@ export default function App() {
                 onAddVideoClip={handleAddVideoClip}
                 onUploadVideoFile={handleUploadVideoFile}
                 onOpenInstallModal={() => setShowInstallModal(true)}
+                onOpenProfileModal={() => setShowProfileModal(true)}
               />
             ) : (
               <div className="w-full flex flex-col gap-4 animate-fade-in">
@@ -1552,6 +1560,14 @@ export default function App() {
         <InstallModal
           onClose={() => setShowInstallModal(false)}
           deferredPrompt={deferredPrompt}
+        />
+      )}
+
+      {/* User Profile & Preferences Modal */}
+      {showProfileModal && (
+        <UserProfileModal
+          isOpen={showProfileModal}
+          onClose={() => setShowProfileModal(false)}
         />
       )}
 

@@ -35,6 +35,10 @@ import ExportModal from './components/ExportModal';
 import InstallModal from './components/InstallModal';
 import Dashboard from './components/Dashboard';
 import UserProfileModal from './components/UserProfileModal';
+import AIMagicStudio from './components/AIMagicStudio';
+import AudioStudio from './components/AudioStudio';
+import MotionStudio from './components/MotionStudio';
+import ScopesMonitor from './components/ScopesMonitor';
 import { getAssetUrl } from './utils/assetUrl';
 
 export default function App() {
@@ -88,7 +92,7 @@ export default function App() {
 
   // UI state toggles
   const [showExportModal, setShowExportModal] = useState<boolean>(false);
-  const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<'grading' | 'inspector' | 'tutorials'>('grading');
+  const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<'grading' | 'inspector' | 'ai_magic' | 'audio' | 'motion' | 'scopes' | 'tutorials'>('grading');
 
   // Retrieve active project details
   const project = projects.find((p) => p.id === activeProjectId) || projects[0];
@@ -238,6 +242,35 @@ export default function App() {
     updateTextClips(updatedText);
     setSelectedClip({ id: newText.id, type: 'text' });
     setActiveWorkspaceTab('inspector');
+  };
+
+  // AI & Audio studio action handlers
+  const handleAddAITextClips = (clips: TextClip[]) => {
+    updateTextClips([...project.textClips, ...clips]);
+  };
+
+  const handleAddAIAudioClip = (clip: AudioClip) => {
+    updateAudioClips([...project.audioClips, clip]);
+  };
+
+  const handleAddMarkers = (markers: any[]) => {
+    setProjects((prev) =>
+      prev.map((p) => (p.id === project.id ? { ...p, markers } : p))
+    );
+  };
+
+  const handleAddSoundEffect = (sfx: { name: string; style: any; duration: number }) => {
+    const newClip: AudioClip = {
+      id: `sfx_${Date.now()}`,
+      name: sfx.name,
+      type: 'audio',
+      startTime: currentTime,
+      duration: sfx.duration,
+      sourceStart: 0,
+      volume: 85,
+      audioStyle: sfx.style,
+    };
+    updateAudioClips([...project.audioClips, newClip]);
   };
 
   // Add random B-roll video clip at playhead
@@ -1241,42 +1274,33 @@ export default function App() {
 
                   {/* Right Column: Interactive Workspaces */}
                   <div className="lg:col-span-5 flex flex-col bg-slate-900/30 border border-slate-800/60 rounded-2xl overflow-hidden shadow-lg backdrop-blur-md h-full min-h-[350px]">
-                    <div className="flex border-b border-slate-900 bg-slate-950/40 p-1 shrink-0">
-                      <button
-                        onClick={() => setActiveWorkspaceTab('grading')}
-                        className={`flex-1 py-2 text-[11px] font-bold rounded-lg uppercase tracking-wider transition-all flex items-center justify-center gap-1 cursor-pointer ${
-                          activeWorkspaceTab === 'grading'
-                            ? 'bg-slate-900 text-indigo-400 shadow-inner'
-                            : 'text-slate-400 hover:text-slate-200'
-                        }`}
-                      >
-                        <Sliders className="w-3 h-3" />
-                        <span>Color grading</span>
-                      </button>
-
-                      <button
-                        onClick={() => setActiveWorkspaceTab('inspector')}
-                        className={`flex-1 py-2 text-[11px] font-bold rounded-lg uppercase tracking-wider transition-all flex items-center justify-center gap-1 cursor-pointer ${
-                          activeWorkspaceTab === 'inspector'
-                            ? 'bg-slate-900 text-indigo-400 shadow-inner'
-                            : 'text-slate-400 hover:text-slate-200'
-                        }`}
-                      >
-                        <Settings className="w-3 h-3" />
-                        <span>Inspector</span>
-                      </button>
-
-                      <button
-                        onClick={() => setActiveWorkspaceTab('tutorials')}
-                        className={`flex-1 py-2 text-[11px] font-bold rounded-lg uppercase tracking-wider transition-all flex items-center justify-center gap-1 cursor-pointer ${
-                          activeWorkspaceTab === 'tutorials'
-                            ? 'bg-slate-900 text-indigo-400 shadow-inner'
-                            : 'text-slate-400 hover:text-slate-200'
-                        }`}
-                      >
-                        <BookOpen className="w-3 h-3" />
-                        <span>Tutorials</span>
-                      </button>
+                    <div className="flex border-b border-slate-900 bg-slate-950/60 p-1 shrink-0 overflow-x-auto no-scrollbar gap-1">
+                      {[
+                        { id: 'grading', label: 'Color', icon: Sliders },
+                        { id: 'inspector', label: 'Inspector', icon: Settings },
+                        { id: 'ai_magic', label: 'AI Magic', icon: Sparkles },
+                        { id: 'audio', label: 'Audio EQ', icon: Music },
+                        { id: 'motion', label: 'Motion PiP', icon: Layers },
+                        { id: 'scopes', label: 'Scopes', icon: Activity },
+                        { id: 'tutorials', label: 'Guide', icon: BookOpen },
+                      ].map((tab) => {
+                        const Icon = tab.icon;
+                        const isActive = activeWorkspaceTab === tab.id;
+                        return (
+                          <button
+                            key={tab.id}
+                            onClick={() => setActiveWorkspaceTab(tab.id as any)}
+                            className={`flex-1 py-2 px-2 text-[10px] font-bold rounded-lg uppercase tracking-wider transition-all flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap ${
+                              isActive
+                                ? 'bg-gradient-to-r from-indigo-600/40 to-purple-600/40 border border-indigo-500/50 text-white shadow-inner'
+                                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/40'
+                            }`}
+                          >
+                            <Icon className="w-3 h-3 shrink-0" />
+                            <span>{tab.label}</span>
+                          </button>
+                        );
+                      })}
                     </div>
 
                     <div className="flex-1 p-4 overflow-y-auto max-h-[360px] lg:max-h-[420px]">
@@ -1389,6 +1413,89 @@ export default function App() {
                               </div>
                             </div>
                           )}
+                        </div>
+                      )}
+
+                      {activeWorkspaceTab === 'ai_magic' && (
+                        <div className="animate-fade-in">
+                          <AIMagicStudio
+                            project={project}
+                            currentTime={currentTime}
+                            onAddTextClips={handleAddAITextClips}
+                            onAddAudioClip={handleAddAIAudioClip}
+                            onAddMarkers={handleAddMarkers}
+                            onAutoSplitClips={handleSplitClip}
+                            onApplySuperRes={() => {
+                              if (selectedClip && selectedClip.type === 'video') {
+                                const updated = project.videoClips.map((c) =>
+                                  c.id === selectedClip.id
+                                    ? {
+                                        ...c,
+                                        colorGrading: {
+                                          ...c.colorGrading,
+                                          sharpness: 45,
+                                          contrast: Math.min(100, c.colorGrading.contrast + 15),
+                                        },
+                                      }
+                                    : c
+                                );
+                                updateVideoClips(updated);
+                              }
+                            }}
+                          />
+                        </div>
+                      )}
+
+                      {activeWorkspaceTab === 'audio' && (
+                        <div className="animate-fade-in">
+                          <AudioStudio
+                            activeAudioClip={
+                              selectedClip && selectedClip.type === 'audio'
+                                ? (activeClipDetails as AudioClip)
+                                : project.audioClips[0] || null
+                            }
+                            onUpdateAudioClip={(updated) => {
+                              const updatedList = project.audioClips.map((c) =>
+                                c.id === updated.id ? updated : c
+                              );
+                              updateAudioClips(updatedList);
+                            }}
+                            onAddSoundEffect={handleAddSoundEffect}
+                            globalVolume={globalVolume}
+                            onVolumeChange={setGlobalVolume}
+                          />
+                        </div>
+                      )}
+
+                      {activeWorkspaceTab === 'motion' && (
+                        <div className="animate-fade-in">
+                          <MotionStudio
+                            selectedClip={
+                              selectedClip && selectedClip.type === 'video'
+                                ? (activeClipDetails as VideoClip)
+                                : project.videoClips[0] || null
+                            }
+                            onUpdateVideoClip={(updated) => {
+                              const updatedList = project.videoClips.map((c) =>
+                                c.id === updated.id ? updated : c
+                              );
+                              updateVideoClips(updatedList);
+                            }}
+                            currentTime={currentTime}
+                          />
+                        </div>
+                      )}
+
+                      {activeWorkspaceTab === 'scopes' && (
+                        <div className="animate-fade-in">
+                          <ScopesMonitor
+                            colorGrading={
+                              selectedClip && selectedClip.type === 'video' && activeClipDetails
+                                ? (activeClipDetails as VideoClip).colorGrading
+                                : project.videoClips[0]?.colorGrading
+                            }
+                            isPlaying={isPlaying}
+                          />
                         </div>
                       )}
 

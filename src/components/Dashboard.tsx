@@ -281,6 +281,7 @@ export default function Dashboard({
   onAddVideoClip,
   onUploadVideoFile,
   onOpenInstallModal,
+  onOpenProfileModal,
 }: DashboardProps) {
   const [selectedCategory, setSelectedCategory] = useState<'All' | 'Cinematic' | 'Gaming' | 'Vlog' | 'Lifestyle'>('All');
   const [searchQuery, setSearchQuery] = useState('');

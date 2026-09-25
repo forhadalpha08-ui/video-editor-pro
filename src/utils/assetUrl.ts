@@ -8,18 +8,22 @@ export function getAssetUrl(path: string): string {
     path.startsWith('http://') || 
     path.startsWith('https://') || 
     path.startsWith('blob:') || 
-    path.startsWith('data:') ||
-    path.startsWith('./')
+    path.startsWith('data:')
   ) {
     return path;
   }
   
-  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
-  const baseUrl = import.meta.env.BASE_URL || './';
-  
-  if (baseUrl === './') {
-    return `./${cleanPath}`;
+  let cleanPath = path;
+  while (cleanPath.startsWith('./') || cleanPath.startsWith('/')) {
+    if (cleanPath.startsWith('./')) {
+      cleanPath = cleanPath.slice(2);
+    } else if (cleanPath.startsWith('/')) {
+      cleanPath = cleanPath.slice(1);
+    }
   }
   
-  return `${baseUrl.endsWith('/') ? baseUrl : baseUrl + '/'}${cleanPath}`;
+  const baseUrl = import.meta.env.BASE_URL || '/';
+  const prefix = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
+  return `${prefix}${cleanPath}`;
 }
+

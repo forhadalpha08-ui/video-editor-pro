@@ -22,7 +22,9 @@ import {
   Home,
   Crown,
   Menu,
-  X
+  X,
+  Move,
+  Activity
 } from 'lucide-react';
 import { Project, VideoClip, AudioClip, TextClip, TimelineTransition, ProceduralType } from './types';
 import { projectPresets, createDefaultGrading } from './utils/projectPresets';

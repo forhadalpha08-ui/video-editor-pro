@@ -803,7 +803,7 @@ export default function PreviewPlayer({
 
         let nextTime = curTime;
 
-        if (activeVideo && !activeVideo.paused && !activeVideo.seeking && activeVideo.readyState >= 2) {
+        if (activeClip && activeVideo && !activeVideo.paused && !activeVideo.seeking && activeVideo.readyState >= 2) {
           const clipSpeed = activeClip.speed || 1.0;
           nextTime = activeClip.startTime + (activeVideo.currentTime / clipSpeed);
         } else {

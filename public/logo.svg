@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100" width="100%" height="100%">
+  <defs>
+    <filter id="neon-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a855f7" />
+      <stop offset="50%" stop-color="#ec4899" />
+      <stop offset="100%" stop-color="#06b6d4" />
+    </linearGradient>
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#94a3b8" />
+    </linearGradient>
+  </defs>
+  <g transform="translate(10, 10)">
+    <path d="M 15 5 L 65 35 L 15 65 Z" fill="none" stroke="url(#logoGrad)" stroke-width="4.5" stroke-linejoin="round" filter="url(#neon-glow)" />
+    <path d="M 28 18 L 54 35 L 28 52 Z" fill="url(#logoGrad)" opacity="0.8" />
+    <circle cx="34" cy="35" r="4" fill="#22d3ee" />
+  </g>
+  <text x="95" y="46" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="800" font-size="34" fill="url(#textGrad)" letter-spacing="-0.5">
+    Vido<tspan fill="#38bdf8">Edit</tspan> <tspan fill="#ec4899">Pro</tspan>
+  </text>
+  <text x="96" y="66" font-family="'JetBrains Mono', monospace" font-weight="600" font-size="9" fill="#64748b" letter-spacing="4.5">
+    TURN IDEAS INTO VIDEOS
+  </text>
+</svg>

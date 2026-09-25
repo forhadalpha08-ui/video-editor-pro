@@ -6,4 +6,11 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   base: './',
+  server: {
+    port: 3000,
+    host: '0.0.0.0',
+    watch: {
+      ignored: ['**/agent/**', '**/node_modules/**'],
+    },
+  },
 });

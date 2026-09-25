@@ -110,9 +110,19 @@ export default function PreviewPlayer({
           v.crossOrigin = 'anonymous';
           v.playsInline = true;
           v.preload = 'auto';
+          v.muted = true;
           v.src = mediaSrc;
+          v.addEventListener('loadedmetadata', () => {
+            if (v.currentTime === 0) v.currentTime = 0.001;
+            drawFrame();
+          });
+          v.addEventListener('loadeddata', () => {
+            if (v.currentTime === 0) v.currentTime = 0.001;
+            drawFrame();
+          });
+          v.addEventListener('canplay', () => drawFrame());
+          v.addEventListener('canplaythrough', () => drawFrame());
           v.addEventListener('timeupdate', () => drawFrame());
-          v.addEventListener('loadeddata', () => drawFrame());
           v.addEventListener('seeked', () => drawFrame());
           v.load();
           videoCacheRef.current.set(clip.videoUrl, v);
@@ -511,7 +521,7 @@ export default function PreviewPlayer({
       }
     } else if (clip.videoUrl) {
       const video = videoCacheRef.current.get(clip.videoUrl);
-      if (video && video.readyState >= 2) {
+      if (video && (video.readyState >= 1 || video.videoWidth > 0)) {
         oCtx.filter = customFilter;
         const vW = video.videoWidth || 640;
         const vH = video.videoHeight || 360;

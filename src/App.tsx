@@ -783,7 +783,7 @@ export default function App() {
                     setIsMobileMenuOpen(false);
                   }}
                   className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-bold rounded-2xl cursor-pointer transition-all ${
-                    activeSidebarTab === 'editor'
+                    activeSidebarTab === 'editor' && activeWorkspaceTab === 'inspector'
                       ? 'btn-sidebar-active'
                       : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
                   }`}
@@ -809,18 +809,87 @@ export default function App() {
                 <button
                   onClick={() => {
                     setActiveSidebarTab('editor');
-                    setActiveWorkspaceTab('tutorials');
+                    setActiveWorkspaceTab('ai_magic');
                     setIsMobileMenuOpen(false);
                   }}
-                  className="flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900/30 transition-all"
+                  className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer transition-all ${
+                    activeSidebarTab === 'editor' && activeWorkspaceTab === 'ai_magic'
+                      ? 'btn-sidebar-active'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
+                  }`}
                 >
-                  <Sparkles className="w-4 h-4" />
-                  <span>AI Tools</span>
+                  <Sparkles className="w-4 h-4 text-pink-400" />
+                  <span>AI Magic Studio</span>
                 </button>
 
                 <button
                   onClick={() => {
                     setActiveSidebarTab('editor');
+                    setActiveWorkspaceTab('audio');
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer transition-all ${
+                    activeSidebarTab === 'editor' && activeWorkspaceTab === 'audio'
+                      ? 'btn-sidebar-active'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
+                  }`}
+                >
+                  <Music className="w-4 h-4 text-cyan-400" />
+                  <span>Pro Audio & EQ</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setActiveSidebarTab('editor');
+                    setActiveWorkspaceTab('grading');
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer transition-all ${
+                    activeSidebarTab === 'editor' && activeWorkspaceTab === 'grading'
+                      ? 'btn-sidebar-active'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
+                  }`}
+                >
+                  <Sliders className="w-4 h-4 text-yellow-400" />
+                  <span>Color Grading</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setActiveSidebarTab('editor');
+                    setActiveWorkspaceTab('motion');
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer transition-all ${
+                    activeSidebarTab === 'editor' && activeWorkspaceTab === 'motion'
+                      ? 'btn-sidebar-active'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
+                  }`}
+                >
+                  <Move className="w-4 h-4 text-purple-400" />
+                  <span>Motion & PiP</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setActiveSidebarTab('editor');
+                    setActiveWorkspaceTab('scopes');
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer transition-all ${
+                    activeSidebarTab === 'editor' && activeWorkspaceTab === 'scopes'
+                      ? 'btn-sidebar-active'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
+                  }`}
+                >
+                  <Activity className="w-4 h-4 text-emerald-400" />
+                  <span>Scopes Monitor</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setActiveSidebarTab('editor');
+                    setActiveWorkspaceTab('inspector');
                     setIsMobileMenuOpen(false);
                   }}
                   className="flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900/30 transition-all"
@@ -836,7 +905,7 @@ export default function App() {
                   }}
                   className="flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl text-slate-400 hover:text-white hover:bg-slate-900/30 transition-all cursor-pointer"
                 >
-                  <Cloud className="w-4 h-4" />
+                  <Cloud className="w-4 h-4 text-blue-400" />
                   <span>Cloud Storage</span>
                 </button>
 
@@ -853,8 +922,7 @@ export default function App() {
 
                 <button
                   onClick={() => {
-                    setActiveSidebarTab('editor');
-                    setActiveWorkspaceTab('inspector');
+                    setShowProfileModal(true);
                     setIsMobileMenuOpen(false);
                   }}
                   className="flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900/30 transition-all"
@@ -933,7 +1001,7 @@ export default function App() {
           <nav className="flex flex-col gap-1.5 mt-1">
             <button
               onClick={() => setActiveSidebarTab('home')}
-              className={`flex items-center gap-3 px-3.5 py-3 text-xs font-bold rounded-2xl cursor-pointer transition-all ${
+              className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-bold rounded-2xl cursor-pointer transition-all ${
                 activeSidebarTab === 'home'
                   ? 'btn-sidebar-active'
                   : 'text-slate-400 hover:text-white hover:bg-slate-900/40'
@@ -944,9 +1012,12 @@ export default function App() {
             </button>
 
             <button
-              onClick={() => setActiveSidebarTab('editor')}
-              className={`flex items-center gap-3 px-3.5 py-3 text-xs font-bold rounded-2xl cursor-pointer transition-all ${
-                activeSidebarTab === 'editor'
+              onClick={() => {
+                setActiveSidebarTab('editor');
+                setActiveWorkspaceTab('inspector');
+              }}
+              className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-bold rounded-2xl cursor-pointer transition-all ${
+                activeSidebarTab === 'editor' && activeWorkspaceTab === 'inspector'
                   ? 'btn-sidebar-active'
                   : 'text-slate-400 hover:text-white hover:bg-slate-900/40'
               }`}
@@ -962,7 +1033,7 @@ export default function App() {
                   document.getElementById('templates-section')?.scrollIntoView({ behavior: 'smooth' });
                 }, 100);
               }}
-              className="flex items-center gap-3 px-3.5 py-3 text-xs font-semibold rounded-2xl cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900/40 transition-all"
+              className="flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900/40 transition-all"
             >
               <Layers className="w-4 h-4" />
               <span>Templates</span>
@@ -971,33 +1042,89 @@ export default function App() {
             <button
               onClick={() => {
                 setActiveSidebarTab('editor');
-                setActiveWorkspaceTab('tutorials');
+                setActiveWorkspaceTab('ai_magic');
               }}
-              className="flex items-center gap-3 px-3.5 py-3 text-xs font-semibold rounded-2xl cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900/40 transition-all"
+              className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer transition-all ${
+                activeSidebarTab === 'editor' && activeWorkspaceTab === 'ai_magic'
+                  ? 'btn-sidebar-active'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900/40'
+              }`}
             >
-              <Sparkles className="w-4 h-4" />
-              <span>AI Tools</span>
+              <Sparkles className="w-4 h-4 text-pink-400" />
+              <span>AI Magic Studio</span>
             </button>
 
             <button
-              onClick={() => setActiveSidebarTab('editor')}
-              className="flex items-center gap-3 px-3.5 py-3 text-xs font-semibold rounded-2xl cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900/40 transition-all"
+              onClick={() => {
+                setActiveSidebarTab('editor');
+                setActiveWorkspaceTab('audio');
+              }}
+              className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer transition-all ${
+                activeSidebarTab === 'editor' && activeWorkspaceTab === 'audio'
+                  ? 'btn-sidebar-active'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900/40'
+              }`}
             >
-              <Film className="w-4 h-4" />
-              <span>Media Library</span>
+              <Music className="w-4 h-4 text-cyan-400" />
+              <span>Pro Audio & EQ</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setActiveSidebarTab('editor');
+                setActiveWorkspaceTab('grading');
+              }}
+              className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer transition-all ${
+                activeSidebarTab === 'editor' && activeWorkspaceTab === 'grading'
+                  ? 'btn-sidebar-active'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900/40'
+              }`}
+            >
+              <Sliders className="w-4 h-4 text-yellow-400" />
+              <span>Color Grading</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setActiveSidebarTab('editor');
+                setActiveWorkspaceTab('motion');
+              }}
+              className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer transition-all ${
+                activeSidebarTab === 'editor' && activeWorkspaceTab === 'motion'
+                  ? 'btn-sidebar-active'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900/40'
+              }`}
+            >
+              <Move className="w-4 h-4 text-purple-400" />
+              <span>Motion & PiP</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setActiveSidebarTab('editor');
+                setActiveWorkspaceTab('scopes');
+              }}
+              className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer transition-all ${
+                activeSidebarTab === 'editor' && activeWorkspaceTab === 'scopes'
+                  ? 'btn-sidebar-active'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900/40'
+              }`}
+            >
+              <Activity className="w-4 h-4 text-emerald-400" />
+              <span>Scopes Monitor</span>
             </button>
 
             <button 
               onClick={() => setShowInstallModal(true)}
-              className="flex items-center gap-3 px-3.5 py-3 text-xs font-semibold rounded-2xl text-slate-400 hover:text-white hover:bg-slate-900/40 transition-all cursor-pointer"
+              className="flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl text-slate-400 hover:text-white hover:bg-slate-900/40 transition-all cursor-pointer"
             >
-              <Cloud className="w-4 h-4" />
+              <Cloud className="w-4 h-4 text-blue-400" />
               <span>Cloud Storage</span>
             </button>
 
             <button
               onClick={() => setShowExportModal(true)}
-              className="flex items-center gap-3 px-3.5 py-3 text-xs font-semibold rounded-2xl cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900/40 transition-all"
+              className="flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900/40 transition-all"
             >
               <History className="w-4 h-4" />
               <span>Export History</span>
@@ -1005,7 +1132,7 @@ export default function App() {
 
             <button
               onClick={() => setShowProfileModal(true)}
-              className="flex items-center gap-3 px-3.5 py-3 text-xs font-semibold rounded-2xl cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900/40 transition-all"
+              className="flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900/40 transition-all"
             >
               <Settings className="w-4 h-4" />
               <span>Settings</span>

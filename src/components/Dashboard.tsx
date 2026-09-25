@@ -57,15 +57,25 @@ function VideoThumb({ videoFile, className }: { videoFile: string; className?: s
       src={src}
       muted
       playsInline
-      preload="metadata"
+      preload="auto"
       loop
+      onLoadedMetadata={() => {
+        if (videoRef.current && videoRef.current.currentTime === 0) {
+          videoRef.current.currentTime = 0.001;
+        }
+      }}
+      onLoadedData={() => {
+        if (videoRef.current && videoRef.current.currentTime === 0) {
+          videoRef.current.currentTime = 0.001;
+        }
+      }}
       onMouseEnter={() => {
         videoRef.current?.play().catch(() => {});
       }}
       onMouseLeave={() => {
         if (videoRef.current) {
           videoRef.current.pause();
-          videoRef.current.currentTime = 0;
+          videoRef.current.currentTime = 0.001;
         }
       }}
       className={className || "w-full h-full object-cover"}

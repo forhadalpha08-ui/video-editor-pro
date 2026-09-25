@@ -634,18 +634,18 @@ export default function App() {
           <div className="w-9 h-9 shrink-0 relative flex items-center justify-center">
             <img
               src="/logo.png"
-              alt="Logo"
-              className="w-full h-full object-contain filter drop-shadow-[0_0_12px_rgba(56,189,248,0.8)]"
+              alt="VidoEdit Pro"
+              className="w-full h-full object-contain filter drop-shadow-[0_0_15px_rgba(56,189,248,0.8)]"
               onError={(e) => {
                 e.currentTarget.src = '/logo.svg';
               }}
             />
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-extrabold tracking-wider text-white leading-none">
-              VidoEdit<span className="text-cyan-400 font-black">Pro</span>
+            <span className="text-base font-extrabold tracking-tight text-white leading-none">
+              VidoEdit<span className="text-[#38bdf8] font-black ml-0.5">Pro</span>
             </span>
-            <span className="text-[6.5px] font-mono font-bold text-slate-400 tracking-[1.5px] mt-1 uppercase leading-none">
+            <span className="text-[7px] font-mono font-bold text-slate-400 tracking-[1.5px] mt-0.5 uppercase leading-none">
               TURN IDEAS INTO VIDEOS
             </span>
           </div>
@@ -660,13 +660,19 @@ export default function App() {
           </button>
 
           {/* User profile avatar with circular neon halo ring */}
-          <div className="w-7 h-7 rounded-full border border-cyan-400 p-0.5 shadow-[0_0_10px_rgba(34,211,238,0.5)] shrink-0 overflow-hidden bg-slate-900">
+          <button 
+            onClick={() => setShowProfileModal(true)}
+            className="w-7 h-7 rounded-full border border-cyan-400 p-0.5 shadow-[0_0_10px_rgba(34,211,238,0.5)] shrink-0 overflow-hidden bg-slate-900 cursor-pointer"
+          >
             <img
-              src="/logomax.png"
+              src="/logo.png"
               alt="Profile"
               className="w-full h-full object-cover rounded-full"
+              onError={(e) => {
+                e.currentTarget.src = '/logomax.png';
+              }}
             />
-          </div>
+          </button>
 
           {/* Menu Drawer Toggle */}
           <button 
@@ -692,21 +698,21 @@ export default function App() {
             <div className="flex flex-col gap-5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 shrink-0 relative flex items-center justify-center">
+                  <div className="w-10 h-10 shrink-0 relative flex items-center justify-center">
                     <img
                       src="/logo.png"
                       alt="Logo"
-                      className="w-full h-full object-contain filter drop-shadow-[0_0_12px_rgba(56,189,248,0.8)]"
+                      className="w-full h-full object-contain filter drop-shadow-[0_0_15px_rgba(56,189,248,0.8)]"
                       onError={(e) => {
                         e.currentTarget.src = '/logo.svg';
                       }}
                     />
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-sm font-extrabold tracking-wider text-white leading-none">
-                      VidoEdit<span className="text-cyan-400 font-black">Pro</span>
+                    <span className="text-base font-extrabold tracking-tight text-white leading-none">
+                      VidoEdit<span className="text-[#38bdf8] font-black ml-0.5">Pro</span>
                     </span>
-                    <span className="text-[6.5px] font-mono font-bold text-slate-400 tracking-[1.5px] mt-1 uppercase leading-none">
+                    <span className="text-[7px] font-mono font-bold text-slate-400 tracking-[1.5px] mt-0.5 uppercase leading-none">
                       TURN IDEAS INTO VIDEOS
                     </span>
                   </div>
@@ -864,26 +870,26 @@ export default function App() {
       )}
 
       {/* DESKTOP STUNNING SIDEBAR SHELL - Matches Mockup 100% */}
-      <aside className="hidden md:flex w-64 sidebar-capsule m-4 h-[calc(100vh-2rem)] flex-col p-5 shrink-0 z-30 relative justify-between overflow-y-auto max-h-screen">
+      <aside className="hidden md:flex w-68 sidebar-capsule m-4 h-[calc(100vh-2rem)] flex-col p-5 shrink-0 z-30 relative justify-between overflow-y-auto max-h-screen">
         
         <div className="flex flex-col gap-6">
-          {/* Glowing Play Triangle Logo beside label ("VidoEdit Pro") */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 shrink-0 relative flex items-center justify-center">
+          {/* Centered Glowing Play Triangle Logo & Brand Header */}
+          <div className="flex flex-col items-center justify-center text-center gap-2 select-none pt-1">
+            <div className="w-14 h-14 shrink-0 relative flex items-center justify-center group cursor-pointer">
               <img
                 src="/logo.png"
-                alt="Logo"
-                className="w-full h-full object-contain filter drop-shadow-[0_0_12px_rgba(56,189,248,0.8)]"
+                alt="VidoEdit Pro"
+                className="w-full h-full object-contain filter drop-shadow-[0_0_20px_rgba(56,189,248,0.75)] drop-shadow-[0_0_35px_rgba(168,85,247,0.5)] group-hover:scale-105 transition-transform"
                 onError={(e) => {
                   e.currentTarget.src = '/logo.svg';
                 }}
               />
             </div>
-            <div className="flex flex-col">
-              <span className="text-base font-extrabold tracking-wider text-white leading-none">
-                VidoEdit<span className="text-cyan-400 font-black">Pro</span>
+            <div className="flex flex-col items-center">
+              <span className="text-xl font-black tracking-tight text-white leading-none flex items-center">
+                VidoEdit<span className="text-[#38bdf8] font-black ml-1">Pro</span>
               </span>
-              <span className="text-[7.5px] font-mono font-bold text-slate-400 tracking-[2px] mt-1 uppercase leading-none">
+              <span className="text-[7.5px] font-mono font-bold text-slate-400 tracking-[3px] mt-1.5 uppercase leading-none">
                 TURN IDEAS INTO VIDEOS
               </span>
             </div>

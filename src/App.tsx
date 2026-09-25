@@ -447,35 +447,55 @@ export default function App() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(2,3,6,0.15)_0%,rgba(2,3,6,0.92)_100%)]" />
       </div>
 
-      {/* 1. MOBILE HEADER BAR - Styled exactly like the premium dark-neon desktop theme */}
-      <div className="flex md:hidden items-center justify-between p-4 bg-slate-950/75 border-b border-indigo-500/10 backdrop-blur-xl z-40 sticky top-0 w-full shrink-0">
+      {/* 1. MOBILE HEADER BAR - Styled exactly like the premium dark-neon mockup theme */}
+      <div className="flex md:hidden items-center justify-between p-3.5 bg-[#030616]/90 border-b border-indigo-500/20 backdrop-blur-2xl z-40 sticky top-0 w-full shrink-0 shadow-xl shadow-black/80">
+        {/* Brand Logo & Name */}
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 shrink-0 relative">
+          <div className="w-9 h-9 shrink-0 relative flex items-center justify-center">
             <img
               src="/logo.png"
               alt="Logo"
-              className="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]"
+              className="w-full h-full object-contain filter drop-shadow-[0_0_12px_rgba(56,189,248,0.8)]"
               onError={(e) => {
                 e.currentTarget.src = '/logo.svg';
               }}
             />
           </div>
           <div className="flex flex-col">
-            <span className="text-xs font-extrabold tracking-wider bg-gradient-to-r from-white via-indigo-200 to-pink-500 bg-clip-text text-transparent leading-none">
-              VidoEdit Pro
+            <span className="text-sm font-extrabold tracking-wider text-white leading-none">
+              VidoEdit<span className="text-cyan-400 font-black">Pro</span>
             </span>
-            <span className="text-[7px] font-mono font-semibold text-slate-500 mt-0.5 tracking-wider leading-none">
+            <span className="text-[6.5px] font-mono font-bold text-slate-400 tracking-[1.5px] mt-1 uppercase leading-none">
               TURN IDEAS INTO VIDEOS
             </span>
           </div>
         </div>
 
-        <button 
-          onClick={() => setIsMobileMenuOpen(true)}
-          className="p-2 bg-slate-900 border border-indigo-500/10 hover:border-indigo-500/30 rounded-xl text-slate-300 hover:text-white transition-all cursor-pointer"
-        >
-          <Menu className="w-4 h-4" />
-        </button>
+        {/* Mobile Right Controls: Bell, Avatar & Menu */}
+        <div className="flex items-center gap-2">
+          {/* Notification bell with red dot */}
+          <button className="relative p-2 bg-[#050711] border border-indigo-500/20 rounded-full text-slate-400 hover:text-white transition-all">
+            <div className="w-3.5 h-3.5 flex items-center justify-center">🔔</div>
+            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-pink-500 rounded-full animate-pulse ring-1 ring-black" />
+          </button>
+
+          {/* User profile avatar with circular neon halo ring */}
+          <div className="w-7 h-7 rounded-full border border-cyan-400 p-0.5 shadow-[0_0_10px_rgba(34,211,238,0.5)] shrink-0">
+            <img
+              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
+              alt="Profile"
+              className="w-full h-full object-cover rounded-full"
+            />
+          </div>
+
+          {/* Menu Drawer Toggle */}
+          <button 
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="p-2 bg-slate-900 border border-indigo-500/20 hover:border-indigo-500/40 rounded-xl text-slate-300 hover:text-white transition-all cursor-pointer"
+          >
+            <Menu className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
       {/* MOBILE DRAWER OVERLAY & DIALOG */}
@@ -488,23 +508,26 @@ export default function App() {
           />
           
           {/* Floating Drawer matching left sidebar exactly */}
-          <div className="relative w-64 bg-slate-950/95 border-r border-indigo-500/20 flex flex-col p-5 h-full z-10 justify-between overflow-y-auto shadow-2xl backdrop-blur-2xl">
-            <div className="flex flex-col gap-6">
+          <div className="relative w-72 bg-[#040614]/95 border-r border-indigo-500/30 flex flex-col p-5 h-full z-10 justify-between overflow-y-auto shadow-2xl backdrop-blur-2xl">
+            <div className="flex flex-col gap-5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 shrink-0 relative">
+                  <div className="w-9 h-9 shrink-0 relative flex items-center justify-center">
                     <img
                       src="/logo.png"
                       alt="Logo"
-                      className="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]"
+                      className="w-full h-full object-contain filter drop-shadow-[0_0_12px_rgba(56,189,248,0.8)]"
                       onError={(e) => {
                         e.currentTarget.src = '/logo.svg';
                       }}
                     />
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-xs font-extrabold tracking-wider bg-gradient-to-r from-white via-indigo-200 to-pink-500 bg-clip-text text-transparent leading-none">
-                      VidoEdit Pro
+                    <span className="text-sm font-extrabold tracking-wider text-white leading-none">
+                      VidoEdit<span className="text-cyan-400 font-black">Pro</span>
+                    </span>
+                    <span className="text-[6.5px] font-mono font-bold text-slate-400 tracking-[1.5px] mt-1 uppercase leading-none">
+                      TURN IDEAS INTO VIDEOS
                     </span>
                   </div>
                 </div>
@@ -513,7 +536,7 @@ export default function App() {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="p-1.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
                 >
-                  <X className="w-3.5 h-3.5" />
+                  <X className="w-4 h-4" />
                 </button>
               </div>
 
@@ -524,9 +547,9 @@ export default function App() {
                     setActiveSidebarTab('home');
                     setIsMobileMenuOpen(false);
                   }}
-                  className={`flex items-center gap-3 px-3.5 py-3 text-xs font-semibold rounded-2xl cursor-pointer transition-all ${
+                  className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-bold rounded-2xl cursor-pointer transition-all ${
                     activeSidebarTab === 'home'
-                      ? 'bg-gradient-to-r from-indigo-950 via-indigo-900/60 to-purple-950 text-indigo-400 border border-indigo-800/40'
+                      ? 'btn-sidebar-active'
                       : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
                   }`}
                 >
@@ -539,9 +562,9 @@ export default function App() {
                     setActiveSidebarTab('editor');
                     setIsMobileMenuOpen(false);
                   }}
-                  className={`flex items-center gap-3 px-3.5 py-3 text-xs font-semibold rounded-2xl cursor-pointer transition-all ${
+                  className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-bold rounded-2xl cursor-pointer transition-all ${
                     activeSidebarTab === 'editor'
-                      ? 'bg-gradient-to-r from-indigo-950 via-indigo-900/60 to-purple-950 text-indigo-400 border border-indigo-800/40'
+                      ? 'btn-sidebar-active'
                       : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
                   }`}
                 >
@@ -557,7 +580,7 @@ export default function App() {
                       document.getElementById('templates-section')?.scrollIntoView({ behavior: 'smooth' });
                     }, 100);
                   }}
-                  className="flex items-center gap-3 px-3.5 py-3 text-xs font-semibold rounded-2xl cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900/30 transition-all"
+                  className="flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900/30 transition-all"
                 >
                   <Layers className="w-4 h-4" />
                   <span>Templates</span>
@@ -569,7 +592,7 @@ export default function App() {
                     setActiveWorkspaceTab('tutorials');
                     setIsMobileMenuOpen(false);
                   }}
-                  className="flex items-center gap-3 px-3.5 py-3 text-xs font-semibold rounded-2xl cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900/30 transition-all"
+                  className="flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900/30 transition-all"
                 >
                   <Sparkles className="w-4 h-4" />
                   <span>AI Tools</span>
@@ -580,13 +603,19 @@ export default function App() {
                     setActiveSidebarTab('editor');
                     setIsMobileMenuOpen(false);
                   }}
-                  className="flex items-center gap-3 px-3.5 py-3 text-xs font-semibold rounded-2xl cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900/30 transition-all"
+                  className="flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900/30 transition-all"
                 >
                   <Film className="w-4 h-4" />
                   <span>Media Library</span>
                 </button>
 
-                <button className="flex items-center gap-3 px-3.5 py-3 text-xs font-semibold rounded-2xl text-slate-400 hover:text-white hover:bg-slate-900/30 transition-all cursor-not-allowed opacity-50">
+                <button 
+                  onClick={() => {
+                    setShowInstallModal(true);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl text-slate-400 hover:text-white hover:bg-slate-900/30 transition-all cursor-pointer"
+                >
                   <Cloud className="w-4 h-4" />
                   <span>Cloud Storage</span>
                 </button>
@@ -596,7 +625,7 @@ export default function App() {
                     setShowExportModal(true);
                     setIsMobileMenuOpen(false);
                   }}
-                  className="flex items-center gap-3 px-3.5 py-3 text-xs font-semibold rounded-2xl cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900/30 transition-all"
+                  className="flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900/30 transition-all"
                 >
                   <History className="w-4 h-4" />
                   <span>Export History</span>
@@ -608,7 +637,7 @@ export default function App() {
                     setActiveWorkspaceTab('inspector');
                     setIsMobileMenuOpen(false);
                   }}
-                  className="flex items-center gap-3 px-3.5 py-3 text-xs font-semibold rounded-2xl cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900/30 transition-all"
+                  className="flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer text-slate-400 hover:text-white hover:bg-slate-900/30 transition-all"
                 >
                   <Settings className="w-4 h-4" />
                   <span>Settings</span>
@@ -616,21 +645,37 @@ export default function App() {
               </nav>
             </div>
 
-            {/* Bottom area */}
-            <div className="flex flex-col gap-4 mt-8 pt-4 border-t border-slate-900/60">
-              <div className="flex flex-col gap-1">
-                <span className="text-[11px] font-extrabold text-white">Create Edit Inspire</span>
-                <span className="text-[9px] text-slate-500 leading-normal">
+            {/* Bottom area matching mockup with planet */}
+            <div className="flex flex-col gap-3 mt-6 pt-4 border-t border-indigo-500/20">
+              {/* Mini Cosmic planet sphere */}
+              <div className="relative w-24 h-24 mx-auto rounded-full overflow-hidden flex items-center justify-center shadow-xl">
+                <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#020108] via-[#4d0c7b] to-[#ea00d9] shadow-[inset_-6px_-6px_20px_rgba(0,0,0,0.95),_0_0_25px_rgba(234,0,217,0.4)]" />
+                <div className="absolute inset-0 rounded-full opacity-55 mix-blend-screen bg-cover animate-planet-clouds" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?auto=format&fit=crop&w=300&q=50')" }} />
+              </div>
+
+              <div className="flex flex-col gap-0.5 text-left">
+                <h4 className="text-xs font-extrabold text-white leading-tight">
+                  Create <br />
+                  <span className="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">Edit</span> <br />
+                  Inspire
+                </h4>
+                <span className="text-[8.5px] text-slate-400 leading-normal mt-0.5">
                   Professional video editing tools for creators.
                 </span>
               </div>
 
-              <button className="w-full py-2.5 bg-gradient-to-r from-blue-600 via-pink-600 to-indigo-600 hover:from-blue-500 hover:to-pink-500 text-white text-[10px] font-bold rounded-xl transition-all shadow-lg flex items-center justify-center gap-1.5 cursor-pointer">
-                <Crown className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+              <button 
+                onClick={() => {
+                  setShowInstallModal(true);
+                  setIsMobileMenuOpen(false);
+                }}
+                className="w-full py-2.5 btn-cosmic-primary text-[10px] font-extrabold rounded-xl flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <Crown className="w-3.5 h-3.5 text-yellow-300 fill-yellow-300" />
                 <span>Upgrade to Pro</span>
               </button>
 
-              <span className="text-[9px] text-slate-600 font-mono text-center block select-none">
+              <span className="text-[8.5px] text-slate-500 font-mono text-center block tracking-wide select-none">
                 v2.8.0
               </span>
             </div>

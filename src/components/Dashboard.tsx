@@ -44,6 +44,33 @@ interface DashboardProps {
   onOpenInstallModal?: () => void;
 }
 
+// Interactive Video Thumbnail Component that plays real video on hover
+function VideoThumb({ videoFile, className }: { videoFile: string; className?: string }) {
+  const videoRef = React.useRef<HTMLVideoElement>(null);
+  const src = videoFile.startsWith('/') ? videoFile : `/${videoFile}`;
+
+  return (
+    <video
+      ref={videoRef}
+      src={src}
+      muted
+      playsInline
+      preload="metadata"
+      loop
+      onMouseEnter={() => {
+        videoRef.current?.play().catch(() => {});
+      }}
+      onMouseLeave={() => {
+        if (videoRef.current) {
+          videoRef.current.pause();
+          videoRef.current.currentTime = 0;
+        }
+      }}
+      className={className || "w-full h-full object-cover"}
+    />
+  );
+}
+
 // 6 Recent Projects matching mockup image
 const RECENT_PROJECTS_LIST = [
   {
@@ -51,7 +78,6 @@ const RECENT_PROJECTS_LIST = [
     name: 'Cinematic Travel Vlog',
     duration: '03:24',
     timeAgo: '2 days ago',
-    img: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=300&q=80',
     videoFile: '2.mp4'
   },
   {
@@ -59,7 +85,6 @@ const RECENT_PROJECTS_LIST = [
     name: 'Neon City Edit',
     duration: '01:56',
     timeAgo: '4 days ago',
-    img: 'https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=300&q=80',
     videoFile: '1.mp4'
   },
   {
@@ -67,7 +92,6 @@ const RECENT_PROJECTS_LIST = [
     name: 'Product Promo',
     duration: '00:48',
     timeAgo: '5 days ago',
-    img: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=300&q=80',
     videoFile: '4.mp4'
   },
   {
@@ -75,7 +99,6 @@ const RECENT_PROJECTS_LIST = [
     name: 'Nature Documentary',
     duration: '05:12',
     timeAgo: '1 week ago',
-    img: 'https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&w=300&q=80',
     videoFile: '5.mp4'
   },
   {
@@ -83,7 +106,6 @@ const RECENT_PROJECTS_LIST = [
     name: 'Gaming Montage',
     duration: '02:37',
     timeAgo: '1 week ago',
-    img: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=300&q=80',
     videoFile: '3.mp4'
   },
   {
@@ -91,7 +113,6 @@ const RECENT_PROJECTS_LIST = [
     name: 'Fashion Reel',
     duration: '01:21',
     timeAgo: '1 week ago',
-    img: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=300&q=80',
     videoFile: '6.mp4'
   }
 ];
@@ -102,7 +123,6 @@ const CATEGORY_CARDS = [
     category: 'Cinematic',
     name: 'Cinematic',
     count: '12 templates',
-    img: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
     templateId: 'template_1',
     videoFile: '1.mp4'
   },
@@ -110,7 +130,6 @@ const CATEGORY_CARDS = [
     category: 'Gaming',
     name: 'Gaming',
     count: '18 templates',
-    img: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=400&q=80',
     templateId: 'template_3',
     videoFile: '3.mp4'
   },
@@ -118,7 +137,6 @@ const CATEGORY_CARDS = [
     category: 'Vlog',
     name: 'Vlog',
     count: '15 templates',
-    img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80',
     templateId: 'template_2',
     videoFile: '2.mp4'
   },
@@ -126,7 +144,6 @@ const CATEGORY_CARDS = [
     category: 'Lifestyle',
     name: 'Lifestyle',
     count: '20 templates',
-    img: 'https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=400&q=80',
     templateId: 'template_6',
     videoFile: '6.mp4'
   }
@@ -141,7 +158,6 @@ const ALL_12_TEMPLATES = [
     description: 'Neon sci-fi sequence with cyberpunk LUT, glowing animated titles, and heavy synthwave audio.',
     duration: '18.0s',
     tracks: '1 Video · 1 Audio · 2 Texts',
-    img: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
     videoFile: '1.mp4'
   },
   {
@@ -151,7 +167,6 @@ const ALL_12_TEMPLATES = [
     description: 'Alpine ridge travel exploration with warm gold LUT, elevation badges, and ambient winds.',
     duration: '16.0s',
     tracks: '1 Video · 1 Audio · 1 Text',
-    img: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=400&q=80',
     videoFile: '2.mp4'
   },
   {
@@ -161,7 +176,6 @@ const ALL_12_TEMPLATES = [
     description: 'High-speed street car drifting with teal & orange grading, speed ramp keyframes, and punchy bass.',
     duration: '15.0s',
     tracks: '1 Video · 1 Audio · 1 Text',
-    img: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=400&q=80',
     videoFile: '3.mp4'
   },
   {
@@ -171,7 +185,6 @@ const ALL_12_TEMPLATES = [
     description: 'Clean hardware showcase for luxury tech gadgets with sleek titanium branding overlays.',
     duration: '14.0s',
     tracks: '1 Video · 1 Audio · 2 Texts',
-    img: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=400&q=80',
     videoFile: '4.mp4'
   },
   {
@@ -181,7 +194,6 @@ const ALL_12_TEMPLATES = [
     description: 'Sweeping anamorphic horizon views with dramatic film glow, deep shadows, and cinematic titles.',
     duration: '15.0s',
     tracks: '1 Video · 1 Audio · 1 Text',
-    img: 'https://images.unsplash.com/photo-1501555088652-021faa106b9b?auto=format&fit=crop&w=400&q=80',
     videoFile: '5.mp4'
   },
   {
@@ -191,7 +203,6 @@ const ALL_12_TEMPLATES = [
     description: 'Fashion lookbook featuring fast cuts, vivid street colors, VHS vintage filters, and pop titles.',
     duration: '14.0s',
     tracks: '1 Video · 1 Audio · 1 Text',
-    img: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=400&q=80',
     videoFile: '6.mp4'
   },
   {
@@ -201,7 +212,6 @@ const ALL_12_TEMPLATES = [
     description: 'Polished studio talking head & tutorial edit with crystal-clear color grading and dynamic lower thirds.',
     duration: '16.0s',
     tracks: '1 Video · 1 Audio · 1 Text',
-    img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
     videoFile: '7.mp4'
   },
   {
@@ -211,7 +221,6 @@ const ALL_12_TEMPLATES = [
     description: 'Adrenaline-packed motion edit with intense color grade, RGB split, and dramatic speed ramping.',
     duration: '18.0s',
     tracks: '1 Video · 1 Audio · 1 Text',
-    img: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=400&q=80',
     videoFile: '8.mp4'
   },
   {
@@ -221,7 +230,6 @@ const ALL_12_TEMPLATES = [
     description: 'Nostalgic retro wave universe with CRT scanlines, chromatic aberration, and neon purple palettes.',
     duration: '15.0s',
     tracks: '1 Video · 1 Audio · 1 Text',
-    img: 'https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=400&q=80',
     videoFile: '9.mp4'
   },
   {
@@ -231,7 +239,6 @@ const ALL_12_TEMPLATES = [
     description: 'High-contrast monochrome film noir aesthetic with authentic silver-halide grain and poetic title cards.',
     duration: '16.0s',
     tracks: '1 Video · 1 Audio · 1 Text',
-    img: 'https://images.unsplash.com/photo-1511556532299-8f662fc26c06?auto=format&fit=crop&w=400&q=80',
     videoFile: '10.mp4'
   },
   {
@@ -241,7 +248,6 @@ const ALL_12_TEMPLATES = [
     description: 'High-speed urban traffic and architectural hyperlapse with vibrant daylight grading and modern dynamic badges.',
     duration: '14.0s',
     tracks: '1 Video · 1 Audio · 1 Text',
-    img: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=400&q=80',
     videoFile: '11.mp4'
   },
   {
@@ -251,7 +257,6 @@ const ALL_12_TEMPLATES = [
     description: 'Interstellar planetary journey with deep space nebulas, glowing starry auras, futuristic title cards and ambient sound.',
     duration: '18.0s',
     tracks: '1 Video · 1 Audio · 1 Text',
-    img: 'https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?auto=format&fit=crop&w=400&q=80',
     videoFile: '12.mp4'
   }
 ];
@@ -394,15 +399,19 @@ export default function Dashboard({
           </div>
         </div>
 
-        {/* Right Hero Video Card Matching Mockup */}
+        {/* Right Hero Video Card with Real Video Playback */}
         <div className="relative w-full lg:w-[460px] aspect-[16/10] rounded-2xl overflow-hidden border border-indigo-500/30 shadow-2xl shadow-indigo-600/20 group">
           {/* Main Background Video Preview */}
-          <img
-            src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"
-            alt="Hero Preview"
+          <video
+            src="/1.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
 
           {/* Big Glowing Play Button in Center */}
           <div 
@@ -420,7 +429,7 @@ export default function Dashboard({
               <Wand2 className="w-3 h-3" />
               <span>AI Auto Edit</span>
             </div>
-            <div className="flex items-center gap-1.5 text-blue-400">
+            <div className="flex items-center gap-2 text-blue-400">
               <Scissors className="w-3 h-3" />
               <span>Smart Cut</span>
             </div>
@@ -594,12 +603,8 @@ export default function Dashboard({
                 className="flex items-center gap-3.5 p-2.5 rounded-2xl bg-[#060817]/90 hover:bg-[#0d1330] border border-slate-900/80 hover:border-indigo-500/40 transition-all cursor-pointer group shadow-sm"
               >
                 <div className="relative w-16 h-10 rounded-xl overflow-hidden shrink-0 bg-black shadow-inner border border-slate-800">
-                  <img
-                    src={proj.img}
-                    alt={proj.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                  <VideoThumb videoFile={proj.videoFile} />
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center pointer-events-none">
                     <div className="w-5 h-5 rounded-full bg-indigo-600/90 text-white flex items-center justify-center border border-white/40">
                       <Play className="w-2.5 h-2.5 text-white fill-white translate-x-[0.5px]" />
                     </div>
@@ -798,24 +803,25 @@ export default function Dashboard({
                     onSelectProject(card.templateId);
                     onLaunchEditor();
                   }}
-                  className="group relative flex flex-col justify-between h-44 rounded-2xl overflow-hidden border border-slate-850 hover:border-indigo-500/50 bg-[#050711] transition-all cursor-pointer shadow-lg hover:shadow-[0_0_25px_rgba(99,102,241,0.2)] hover:-translate-y-1"
+                  className="template-category-card group relative flex flex-col justify-between h-44 bg-[#050711] cursor-pointer"
                 >
-                  <img
-                    src={card.img}
-                    alt={card.name}
-                    className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:scale-105 group-hover:opacity-65 transition-all duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                  <div className="absolute inset-0 w-full h-full">
+                    <VideoThumb
+                      videoFile={card.videoFile}
+                      className="w-full h-full object-cover opacity-60 group-hover:scale-105 group-hover:opacity-85 transition-all duration-500"
+                    />
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none" />
 
                   {/* Play Button Icon */}
-                  <div className="relative z-10 p-3 flex justify-start">
+                  <div className="relative z-10 p-3 flex justify-start pointer-events-none">
                     <div className="w-7 h-7 rounded-full bg-indigo-600/90 text-white flex items-center justify-center border border-white/40 shadow-lg group-hover:scale-110 transition-transform">
                       <Play className="w-3 h-3 text-white fill-white translate-x-[0.5px]" />
                     </div>
                   </div>
 
                   {/* Title & Count */}
-                  <div className="relative z-10 p-3.5 pt-0">
+                  <div className="relative z-10 p-3.5 pt-0 pointer-events-none">
                     <h4 className="text-xs font-bold text-white group-hover:text-indigo-300 transition-colors">
                       {card.name}
                     </h4>
@@ -840,15 +846,16 @@ export default function Dashboard({
                 }}
                 className="group relative flex flex-col justify-between h-48 rounded-2xl overflow-hidden border border-slate-850 hover:border-indigo-500/50 bg-[#050711] transition-all cursor-pointer shadow-lg hover:shadow-[0_0_25px_rgba(99,102,241,0.2)] hover:-translate-y-1"
               >
-                <img
-                  src={tmpl.img}
-                  alt={tmpl.name}
-                  className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 group-hover:opacity-55 transition-all duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+                <div className="absolute inset-0 w-full h-full">
+                  <VideoThumb
+                    videoFile={tmpl.videoFile}
+                    className="w-full h-full object-cover opacity-50 group-hover:scale-105 group-hover:opacity-80 transition-all duration-500"
+                  />
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent pointer-events-none" />
 
                 {/* Top Badge Overlay */}
-                <div className="relative z-10 flex items-center justify-between p-3.5">
+                <div className="relative z-10 flex items-center justify-between p-3.5 pointer-events-none">
                   <span className="px-2 py-0.5 bg-black/80 rounded border border-slate-800 text-[8px] font-extrabold text-indigo-400 uppercase tracking-wider">
                     {tmpl.category}
                   </span>
@@ -858,7 +865,7 @@ export default function Dashboard({
                 </div>
 
                 {/* Bottom Title area */}
-                <div className="relative z-10 p-3.5 pt-0 flex flex-col gap-1">
+                <div className="relative z-10 p-3.5 pt-0 flex flex-col gap-1 pointer-events-none">
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center border border-white/40 shadow group-hover:scale-110 transition-transform">
                       <Play className="w-2.5 h-2.5 fill-white text-white translate-x-[0.5px]" />
@@ -899,14 +906,17 @@ export default function Dashboard({
           </div>
         </div>
 
-        {/* Laptop asset visual wrapper */}
+        {/* Laptop asset visual wrapper with real video playback */}
         <div className="relative w-full md:w-80 aspect-video rounded-xl overflow-hidden shadow-2xl shrink-0 group border border-slate-800">
-          <img
-            src="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=600&q=80"
-            alt="Multi-platform editing"
+          <video
+            src="/1.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
           />
-          <div className="absolute inset-0 bg-indigo-950/20" />
+          <div className="absolute inset-0 bg-indigo-950/20 pointer-events-none" />
           <div className="absolute bottom-2 right-2 px-2 py-0.5 bg-black/80 border border-slate-800 rounded text-[9px] font-bold text-indigo-400">
             Realtime Sync
           </div>

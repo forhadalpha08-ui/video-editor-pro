@@ -25,7 +25,8 @@ import {
   X,
   Move,
   Activity,
-  Wand2
+  Wand2,
+  Bell
 } from 'lucide-react';
 import { Project, VideoClip, AudioClip, TextClip, TimelineTransition, ProceduralType } from './types';
 import { projectPresets, createDefaultGrading } from './utils/projectPresets';
@@ -666,9 +667,12 @@ export default function App() {
       </div>
 
       {/* 1. MOBILE HEADER BAR - Styled exactly like the premium dark-neon mockup theme */}
-      <div className="flex md:hidden items-center justify-between p-3.5 bg-[#030616]/90 border-b border-indigo-500/20 backdrop-blur-2xl z-40 sticky top-0 w-full shrink-0 shadow-xl shadow-black/80">
+      <div className="flex md:hidden items-center justify-between p-3.5 bg-[#030616]/95 border-b border-indigo-500/20 backdrop-blur-2xl z-40 sticky top-0 w-full shrink-0 shadow-xl shadow-black/80">
         {/* Brand Logo & Name */}
-        <div className="flex items-center gap-2.5">
+        <div 
+          onClick={() => setActiveSidebarTab('home')}
+          className="flex items-center gap-2.5 cursor-pointer"
+        >
           <div className="w-9 h-9 shrink-0 relative flex items-center justify-center">
             <img
               src={getAssetUrl('logo.png')}
@@ -680,7 +684,7 @@ export default function App() {
             />
           </div>
           <div className="flex flex-col">
-            <span className="text-base font-extrabold tracking-tight text-white leading-none">
+            <span className="text-base font-extrabold tracking-tight text-white leading-none flex items-center">
               VidoEdit<span className="text-[#38bdf8] font-black ml-0.5">Pro</span>
             </span>
             <span className="text-[7px] font-mono font-bold text-slate-400 tracking-[1.5px] mt-0.5 uppercase leading-none">
@@ -689,12 +693,17 @@ export default function App() {
           </div>
         </div>
 
-        {/* Mobile Right Controls: Bell, Avatar & Menu */}
+        {/* Mobile Right Controls: Bell (1), Avatar & Menu */}
         <div className="flex items-center gap-2">
-          {/* Notification bell with red dot */}
-          <button className="relative p-2 bg-[#050711] border border-indigo-500/20 rounded-full text-slate-400 hover:text-white transition-all">
-            <div className="w-3.5 h-3.5 flex items-center justify-center">🔔</div>
-            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-pink-500 rounded-full animate-pulse ring-1 ring-black" />
+          {/* Notification bell with red badge '1' */}
+          <button 
+            onClick={() => setShowProfileModal(true)}
+            className="relative p-2 bg-[#050711] border border-indigo-500/20 rounded-full text-slate-400 hover:text-white transition-all cursor-pointer"
+          >
+            <Bell className="w-4 h-4 text-slate-300" />
+            <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-[#ff2a6d] text-white text-[8px] font-bold rounded-full flex items-center justify-center ring-1 ring-black">
+              1
+            </span>
           </button>
 
           {/* User profile avatar with circular neon halo ring */}
@@ -1693,56 +1702,6 @@ export default function App() {
         </div>
 
       </main>
-
-      {/* FLOATING MOBILE BOTTOM NAVIGATION BAR - For on-the-go quick access */}
-      <nav className="fixed bottom-3 left-4 right-4 z-40 md:hidden bg-slate-950/85 backdrop-blur-2xl border border-indigo-500/25 rounded-2xl px-3 py-2 flex items-center justify-around shadow-2xl shadow-black/80">
-        <button
-          onClick={() => setActiveSidebarTab('home')}
-          className={`flex flex-col items-center gap-1 transition-all ${
-            activeSidebarTab === 'home' ? 'text-indigo-400 font-bold scale-105' : 'text-slate-400 hover:text-white'
-          }`}
-        >
-          <Home className="w-4 h-4" />
-          <span className="text-[9px] tracking-wide">Home</span>
-        </button>
-
-        <button
-          onClick={() => setActiveSidebarTab('editor')}
-          className={`flex flex-col items-center gap-1 transition-all ${
-            activeSidebarTab === 'editor' ? 'text-indigo-400 font-bold scale-105' : 'text-slate-400 hover:text-white'
-          }`}
-        >
-          <Sliders className="w-4 h-4" />
-          <span className="text-[9px] tracking-wide">Editor</span>
-        </button>
-
-        <button
-          onClick={() => {
-            setActiveSidebarTab('editor');
-            setActiveWorkspaceTab('grading');
-          }}
-          className="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-all"
-        >
-          <Sparkles className="w-4 h-4 text-purple-400" />
-          <span className="text-[9px] tracking-wide">AI Tools</span>
-        </button>
-
-        <button
-          onClick={() => setShowExportModal(true)}
-          className="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-all"
-        >
-          <Download className="w-4 h-4 text-pink-400" />
-          <span className="text-[9px] tracking-wide">Export</span>
-        </button>
-
-        <button
-          onClick={() => setShowInstallModal(true)}
-          className="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-all"
-        >
-          <Crown className="w-4 h-4 text-yellow-400" />
-          <span className="text-[9px] tracking-wide">Install</span>
-        </button>
-      </nav>
 
       {/* Exporting & Render Modal */}
       {showExportModal && (

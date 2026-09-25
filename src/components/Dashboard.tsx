@@ -344,8 +344,8 @@ export default function Dashboard({
           </div>
         </div>
 
-        {/* Global Controls matching mockup */}
-        <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end flex-wrap">
+        {/* Global Controls matching mockup - visible on desktop */}
+        <div className="hidden md:flex items-center gap-2.5 w-full sm:w-auto justify-end flex-wrap">
           
           {/* Global Language / Region Pill */}
           <button className="flex items-center gap-2 px-4 py-2 bg-[#050711]/90 hover:bg-[#090d1f] border border-slate-850 rounded-full text-xs text-slate-300 font-semibold hover:text-white transition-all shadow-sm">

@@ -26,7 +26,8 @@ import {
   Move,
   Activity,
   Wand2,
-  Bell
+  Bell,
+  Scissors
 } from 'lucide-react';
 import { Project, VideoClip, AudioClip, TextClip, TimelineTransition, ProceduralType } from './types';
 import { projectPresets, createDefaultGrading } from './utils/projectPresets';
@@ -666,39 +667,73 @@ export default function App() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(2,3,6,0.15)_0%,rgba(2,3,6,0.92)_100%)]" />
       </div>
 
-      {/* 1. MOBILE HEADER BAR - Styled exactly like the premium dark-neon mockup theme */}
-      <div className="flex md:hidden items-center justify-between p-3.5 bg-[#030616]/95 border-b border-indigo-500/20 backdrop-blur-2xl z-40 sticky top-0 w-full shrink-0 shadow-xl shadow-black/80">
-        {/* Brand Logo & Name */}
-        <div 
-          onClick={() => setActiveSidebarTab('home')}
-          className="flex items-center gap-2.5 cursor-pointer"
-        >
-          <div className="w-9 h-9 shrink-0 relative flex items-center justify-center">
-            <img
-              src={getAssetUrl('logo.png')}
-              alt="VidoEdit Pro"
-              className="w-full h-full object-contain filter drop-shadow-[0_0_15px_rgba(56,189,248,0.8)]"
-              onError={(e) => {
-                e.currentTarget.src = getAssetUrl('logo.svg');
-              }}
-            />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-base font-extrabold tracking-tight text-white leading-none flex items-center">
-              VidoEdit<span className="text-[#38bdf8] font-black ml-0.5">Pro</span>
-            </span>
-            <span className="text-[7px] font-mono font-bold text-slate-400 tracking-[1.5px] mt-0.5 uppercase leading-none">
-              TURN IDEAS INTO VIDEOS
-            </span>
+      {/* 1. MOBILE HEADER BAR - Styled exactly like the agent system with specular highlights */}
+      <header className="relative z-50 flex md:hidden h-[64px] w-full shrink-0 items-center justify-between border-b border-white/10 bg-[#03030b]/80 px-3.5 backdrop-blur-[32px] shadow-[0_4px_30px_rgba(0,0,0,0.4)] sticky top-0">
+        {/* Header specular highlights */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#A855F7]/30 to-transparent" />
+
+        {/* LEFT: Menu Toggle + Brand Logo & Name */}
+        <div className="flex items-center gap-2.5 min-w-0">
+          {/* Descending-width Hamburger Menu Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="flex h-9.5 w-9.5 items-center justify-center rounded-xl text-[#94A3B8] transition-all hover:bg-white/[0.08] hover:text-white cursor-pointer group"
+            aria-label="Toggle Navigation Menu"
+          >
+            <svg
+              className="h-6 w-6 text-current transition-all group-hover:scale-105"
+              viewBox="0 0 24 28"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            >
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="14" x2="16" y2="14" />
+              <line x1="3" y1="22" x2="10" y2="22" />
+            </svg>
+          </button>
+
+          {/* Logo & Brand text */}
+          <div 
+            onClick={() => setActiveSidebarTab('home')}
+            className="flex items-center gap-2 cursor-pointer select-none"
+          >
+            <div className="w-8 h-8 shrink-0 relative flex items-center justify-center">
+              <img
+                src={getAssetUrl('logo.png')}
+                alt="VidoEdit Pro"
+                className="w-full h-full object-contain filter drop-shadow-[0_0_15px_rgba(56,189,248,0.8)]"
+                onError={(e) => {
+                  e.currentTarget.src = getAssetUrl('logo.svg');
+                }}
+              />
+            </div>
+            <div className="flex flex-col leading-none">
+              <span className="text-[14px] font-black tracking-tight text-white flex items-center">
+                VidoEdit<span className="text-[#38bdf8] font-black ml-0.5">Pro</span>
+              </span>
+              <span className="text-[6.5px] font-mono font-bold text-slate-400 tracking-[1.5px] mt-0.5 uppercase">
+                TURN IDEAS INTO VIDEOS
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Mobile Right Controls: Bell (1), Avatar & Menu */}
+        {/* RIGHT: Security/AI Status pill + Notification Bell (1) + Glowing Neon Avatar */}
         <div className="flex items-center gap-2">
+          {/* AI Active / Secure badge pill */}
+          <div className="flex items-center gap-1 rounded-full border border-[#7E17F8]/40 bg-gradient-to-r from-[#2563EB]/15 via-[#7E17F8]/20 to-[#A855F7]/15 px-2 py-1 text-[8.5px] font-extrabold text-[#C084FC] shadow-[0_0_12px_rgba(126,23,248,0.25)]">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-[8px] font-mono tracking-wider">AI PRO</span>
+          </div>
+
           {/* Notification bell with red badge '1' */}
           <button 
             onClick={() => setShowProfileModal(true)}
-            className="relative p-2 bg-[#050711] border border-indigo-500/20 rounded-full text-slate-400 hover:text-white transition-all cursor-pointer"
+            className="relative p-2 bg-[#0B0B1B] border border-[#7C3AED]/35 rounded-full text-slate-400 hover:text-white transition-all cursor-pointer"
+            title="Notifications"
           >
             <Bell className="w-4 h-4 text-slate-300" />
             <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-[#ff2a6d] text-white text-[8px] font-bold rounded-full flex items-center justify-center ring-1 ring-black">
@@ -706,37 +741,33 @@ export default function App() {
             </span>
           </button>
 
-          {/* User profile avatar with circular neon halo ring */}
-          <button 
+          {/* Glowing User profile avatar */}
+          <div
             onClick={() => setShowProfileModal(true)}
-            className="w-7 h-7 rounded-full border border-cyan-400 p-0.5 shadow-[0_0_10px_rgba(34,211,238,0.5)] shrink-0 overflow-hidden bg-slate-900 cursor-pointer"
+            className="relative flex h-8 w-8 items-center justify-center cursor-pointer"
+            title="User Profile & Settings"
           >
-            <img
-              src={getAssetUrl('logo.png')}
-              alt="Profile"
-              className="w-full h-full object-cover rounded-full"
-              onError={(e) => {
-                e.currentTarget.src = getAssetUrl('logomax.png');
-              }}
-            />
-          </button>
-
-          {/* Menu Drawer Toggle */}
-          <button 
-            onClick={() => setIsMobileMenuOpen(true)}
-            className="p-2 bg-slate-900 border border-indigo-500/20 hover:border-indigo-500/40 rounded-xl text-slate-300 hover:text-white transition-all cursor-pointer"
-          >
-            <Menu className="w-4 h-4" />
-          </button>
+            <div className="absolute inset-0 rounded-full bg-[#7C3AED]/30 blur-md" />
+            <div className="relative flex h-7 w-7 items-center justify-center rounded-full p-[1.5px] bg-gradient-to-r from-[#2563EB] via-[#7E17F8] to-[#C084FC] shadow-[0_0_15px_rgba(126,23,248,0.5)] overflow-hidden">
+              <img
+                src={getAssetUrl('logo.png')}
+                alt="Profile"
+                className="w-full h-full object-cover rounded-full"
+                onError={(e) => {
+                  e.currentTarget.src = getAssetUrl('logomax.png');
+                }}
+              />
+            </div>
+          </div>
         </div>
-      </div>
+      </header>
 
       {/* MOBILE DRAWER OVERLAY & DIALOG */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-50 md:hidden flex">
           {/* Dark backdrop overlay with soft blur */}
           <div 
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" 
+            className="fixed inset-0 bg-black/70 backdrop-blur-md transition-opacity" 
             onClick={() => setIsMobileMenuOpen(false)}
           />
           
@@ -1087,7 +1118,7 @@ export default function App() {
       </aside>
 
       {/* 2. MAIN LAYOUT AND PREVIEW DEVICE WRAPPER PANEL */}
-      <main className="flex-1 overflow-y-auto max-h-screen p-3 md:p-6 flex flex-col">
+      <main className="flex-1 overflow-y-auto max-h-screen p-3 md:p-6 pb-24 md:pb-6 flex flex-col">
         
         {/* Device Layout & Workspace control bar - ONLY visible when in Editor Workspace */}
         {activeSidebarTab === 'editor' && (
@@ -1702,6 +1733,95 @@ export default function App() {
         </div>
 
       </main>
+
+      {/* AGENT-STYLE GLASSMORPHIC MOBILE BOTTOM NAVIGATION BAR */}
+      <nav
+        id="mobile_bottom_nav"
+        aria-label="Mobile Navigation"
+        className="fixed bottom-0 left-0 right-0 z-40 flex h-16 items-center justify-around border-t border-[rgba(139,92,246,0.25)] bg-[#050510]/85 px-2 backdrop-blur-[32px] md:hidden safe-area-pb shadow-2xl"
+      >
+        {/* 1. Home */}
+        <button
+          onClick={() => setActiveSidebarTab('home')}
+          className={`relative flex flex-1 flex-col items-center justify-center py-1 transition-all cursor-pointer ${
+            activeSidebarTab === 'home' ? 'text-[#C084FC] font-bold' : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+          }`}
+          aria-label="Home"
+        >
+          <Home className="h-5 w-5" />
+          <span className="mt-0.5 text-[10px] tracking-tight">Home</span>
+          {activeSidebarTab === 'home' && (
+            <span className="absolute bottom-0.5 h-1 w-6 rounded-full bg-[#7C3AED] shadow-[0_0_8px_#A855F7]" />
+          )}
+        </button>
+
+        {/* 2. CapCut / Easy Editor */}
+        <button
+          onClick={() => {
+            setActiveSidebarTab('editor');
+            setActiveWorkspaceTab('capcut');
+          }}
+          className={`relative flex flex-1 flex-col items-center justify-center py-1 transition-all cursor-pointer ${
+            activeSidebarTab === 'editor' && activeWorkspaceTab === 'capcut' ? 'text-[#C084FC] font-bold' : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+          }`}
+          aria-label="CapCut Editor"
+        >
+          <Scissors className="h-5 w-5" />
+          <span className="mt-0.5 text-[10px] tracking-tight">Editor</span>
+          {activeSidebarTab === 'editor' && activeWorkspaceTab === 'capcut' && (
+            <span className="absolute bottom-0.5 h-1 w-6 rounded-full bg-[#7C3AED] shadow-[0_0_8px_#A855F7]" />
+          )}
+        </button>
+
+        {/* 3. AI Tools with animated pulse indicator */}
+        <button
+          onClick={() => {
+            setActiveSidebarTab('editor');
+            setActiveWorkspaceTab('ai_magic');
+          }}
+          className={`relative flex flex-1 flex-col items-center justify-center py-1 transition-all cursor-pointer ${
+            activeSidebarTab === 'editor' && activeWorkspaceTab === 'ai_magic' ? 'text-[#C084FC] font-bold' : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+          }`}
+          aria-label="AI Magic Studio"
+        >
+          <div className="relative">
+            <Sparkles className="h-5 w-5 text-pink-400" />
+            <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#C084FC] opacity-75" />
+              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#7C3AED]" />
+            </span>
+          </div>
+          <span className="mt-0.5 text-[10px] tracking-tight">AI Tools</span>
+          {activeSidebarTab === 'editor' && activeWorkspaceTab === 'ai_magic' && (
+            <span className="absolute bottom-0.5 h-1 w-6 rounded-full bg-[#7C3AED] shadow-[0_0_8px_#A855F7]" />
+          )}
+        </button>
+
+        {/* 4. Templates */}
+        <button
+          onClick={() => {
+            setActiveSidebarTab('home');
+            setTimeout(() => {
+              document.getElementById('templates-section')?.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+          }}
+          className="relative flex flex-1 flex-col items-center justify-center py-1 transition-all text-[#94A3B8] hover:text-[#F8FAFC] cursor-pointer"
+          aria-label="Templates"
+        >
+          <Layers className="h-5 w-5" />
+          <span className="mt-0.5 text-[10px] tracking-tight">Templates</span>
+        </button>
+
+        {/* 5. Menu Drawer */}
+        <button
+          onClick={() => setIsMobileMenuOpen(true)}
+          className="flex flex-1 flex-col items-center justify-center py-1 text-[#94A3B8] hover:text-[#F8FAFC] transition-all cursor-pointer group"
+          aria-label="Open Full Menu"
+        >
+          <Menu className="h-5 w-5 group-hover:text-white" />
+          <span className="mt-0.5 text-[10px] tracking-tight">Menu</span>
+        </button>
+      </nav>
 
       {/* Exporting & Render Modal */}
       {showExportModal && (

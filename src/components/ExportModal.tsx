@@ -277,38 +277,68 @@ export default function ExportModal({ project, onClose }: ExportModalProps) {
 
           ctx.filter = customFilter;
 
-          // Draw real video frames if videoUrl exists and video element can seek
-          if (activeClip.videoUrl && videoEl) {
-            if (currentLoadedVideoUrl !== activeClip.videoUrl) {
-              videoEl.src = activeClip.videoUrl;
-              videoEl.load();
-              currentLoadedVideoUrl = activeClip.videoUrl;
-              await new Promise((res) => {
-                videoEl.onloadeddata = () => res(true);
-                setTimeout(() => res(true), 300);
-              });
-            }
-
-            const sourceTargetTime = (activeClip.sourceStart || 0) + localTime;
-            await seekVideoPromise(videoEl, sourceTargetTime);
+          // Draw real video or image frames based on clip media
+          if (activeClip.videoUrl) {
+            const isImage = (
+              activeClip.videoUrl.startsWith('data:image') ||
+              activeClip.videoUrl.endsWith('.png') ||
+              activeClip.videoUrl.endsWith('.jpg') ||
+              activeClip.videoUrl.endsWith('.jpeg') ||
+              activeClip.videoUrl.endsWith('.webp') ||
+              activeClip.videoUrl.endsWith('.gif') ||
+              activeClip.videoUrl.endsWith('.svg')
+            );
 
             const cropX = activeClip.cropX || 0;
             const cropY = activeClip.cropY || 0;
             const cropW = activeClip.cropWidth || 100;
             const cropH = activeClip.cropHeight || 100;
 
-            const vW = videoEl.videoWidth || renderW;
-            const vH = videoEl.videoHeight || renderH;
+            if (isImage) {
+              const img = new Image();
+              img.crossOrigin = 'anonymous';
+              img.src = activeClip.videoUrl;
+              await new Promise((res) => {
+                if (img.complete) res(true);
+                else {
+                  img.onload = () => res(true);
+                  img.onerror = () => res(true);
+                }
+              });
+              const iW = img.naturalWidth || renderW;
+              const iH = img.naturalHeight || renderH;
+              const sx = (cropX / 100) * iW;
+              const sy = (cropY / 100) * iH;
+              const sw = (cropW / 100) * iW;
+              const sh = (cropH / 100) * iH;
+              ctx.drawImage(img, sx, sy, sw, sh, 0, 0, renderW, renderH);
+            } else if (videoEl) {
+              if (currentLoadedVideoUrl !== activeClip.videoUrl) {
+                videoEl.src = activeClip.videoUrl;
+                videoEl.load();
+                currentLoadedVideoUrl = activeClip.videoUrl;
+                await new Promise((res) => {
+                  videoEl.onloadeddata = () => res(true);
+                  setTimeout(() => res(true), 300);
+                });
+              }
 
-            const sx = (cropX / 100) * vW;
-            const sy = (cropY / 100) * vH;
-            const sw = (cropW / 100) * vW;
-            const sh = (cropH / 100) * vH;
+              const sourceTargetTime = (activeClip.sourceStart || 0) + localTime;
+              await seekVideoPromise(videoEl, sourceTargetTime);
 
-            ctx.drawImage(videoEl, sx, sy, sw, sh, 0, 0, renderW, renderH);
+              const vW = videoEl.videoWidth || renderW;
+              const vH = videoEl.videoHeight || renderH;
+
+              const sx = (cropX / 100) * vW;
+              const sy = (cropY / 100) * vH;
+              const sw = (cropW / 100) * vW;
+              const sh = (cropH / 100) * vH;
+
+              ctx.drawImage(videoEl, sx, sy, sw, sh, 0, 0, renderW, renderH);
+            }
           } else {
-            // Procedural generator fallback
-            drawClipFrame(ctx, activeClip.proceduralType, localTime, activeClip.colorGrading);
+            ctx.fillStyle = '#050711';
+            ctx.fillRect(0, 0, renderW, renderH);
           }
 
           ctx.filter = 'none';

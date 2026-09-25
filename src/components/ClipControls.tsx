@@ -266,29 +266,59 @@ export default function ClipControls({
           </span>
         </div>
 
-        {/* 1. Quick Video Source Selector (1-12.mp4) */}
-        <div className="flex flex-col gap-1.5">
-          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider flex items-center justify-between">
-            <span>Video Media File (1-12.mp4)</span>
-            <span className="text-indigo-400 font-mono text-[9px]">{clip.videoUrl || 'Procedural'}</span>
-          </span>
-          <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
-            {TEMPLATE_VIDEOS.map((item) => {
-              const isSelected = clip.videoUrl === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => onUpdateVideoClip({ ...clip, videoUrl: item.id, name: `Video ${item.label}` })}
-                  className={`py-2 px-1 text-[9.5px] font-bold rounded-xl border text-center transition-all cursor-pointer truncate ${
-                    isSelected
-                      ? 'bg-indigo-600 text-white border-indigo-400 shadow-md shadow-indigo-600/30'
-                      : 'bg-slate-950/60 border-slate-850 text-slate-400 hover:text-white'
-                  }`}
-                >
-                  {item.label}
-                </button>
-              );
-            })}
+        {/* 1. Quick Video Source Selector (1-12.mp4 or Custom Upload) */}
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+              Selected Media Source
+            </span>
+            <span className="text-cyan-400 font-mono text-[9.5px] truncate max-w-[150px]">
+              {clip.videoUrl || clip.name}
+            </span>
+          </div>
+
+          {/* Upload / Replace with Local File */}
+          <label className="flex items-center justify-center gap-2 py-2.5 px-3 bg-gradient-to-r from-blue-600/20 via-indigo-600/20 to-purple-600/20 hover:from-blue-600/30 hover:to-purple-600/30 border border-indigo-500/40 hover:border-cyan-400 rounded-xl text-xs font-bold text-cyan-300 transition-all cursor-pointer shadow-md">
+            <Plus className="w-4 h-4 text-cyan-400" />
+            <span>Upload / Replace with My Media File</span>
+            <input
+              type="file"
+              accept="video/*,image/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  const url = URL.createObjectURL(file);
+                  onUpdateVideoClip({
+                    ...clip,
+                    videoUrl: url,
+                    name: file.name,
+                  });
+                }
+              }}
+            />
+          </label>
+
+          <div className="flex flex-col gap-1">
+            <span className="text-[9px] text-slate-500 font-bold uppercase">Or Choose Template Video (1-12.mp4)</span>
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
+              {TEMPLATE_VIDEOS.map((item) => {
+                const isSelected = clip.videoUrl === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => onUpdateVideoClip({ ...clip, videoUrl: item.id, name: `Video ${item.label}` })}
+                    className={`py-2 px-1 text-[9.5px] font-bold rounded-xl border text-center transition-all cursor-pointer truncate ${
+                      isSelected
+                        ? 'bg-indigo-600 text-white border-indigo-400 shadow-md shadow-indigo-600/30'
+                        : 'bg-slate-950/60 border-slate-850 text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 

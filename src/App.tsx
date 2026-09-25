@@ -362,64 +362,83 @@ export default function App() {
     setSelectedClip(null);
   };
 
-  // Handle user uploaded video file for custom editing and downloading
+  // Handle user uploaded video or image file for custom editing and downloading
   const handleUploadVideoFile = (file: File) => {
     const videoUrl = URL.createObjectURL(file);
-    const newProject: Project = {
-      id: `custom_proj_${Date.now()}`,
-      name: file.name.replace(/\.[^/.]+$/, ""),
-      duration: 15,
-      videoClips: [
-        {
-          id: `custom_v_${Date.now()}`,
-          name: file.name,
-          type: 'video',
-          proceduralType: 'cyberpunk_grid',
-          startTime: 0,
-          duration: 15.0,
-          sourceStart: 0,
-          sourceDuration: 30,
-          speed: 1.0,
-          colorGrading: createDefaultGrading(),
-          volume: 0,
-          videoUrl: videoUrl,
-          thumbnailUrl: '/bg2.png',
-        }
-      ],
-      audioClips: [
-        {
-          id: `custom_a_${Date.now()}`,
-          name: 'Background Rhythm',
-          type: 'audio',
-          startTime: 0,
-          duration: 15,
-          sourceStart: 0,
-          volume: 75,
-          audioStyle: 'beat_loop',
-        }
-      ],
-      textClips: [
-        {
-          id: `custom_t_${Date.now()}`,
-          name: 'Title Overlay',
-          type: 'text',
-          startTime: 1.0,
-          duration: 5.0,
-          text: file.name.replace(/\.[^/.]+$/, "").toUpperCase(),
-          color: '#00ffea',
-          fontSize: 30,
-          positionY: 40,
-          style: 'neon',
-        }
-      ],
-      transitions: [],
+    const isImage = file.type.startsWith('image/');
+
+    const createAndSetProject = (clipDuration: number) => {
+      const newProject: Project = {
+        id: `custom_proj_${Date.now()}`,
+        name: file.name.replace(/\.[^/.]+$/, ''),
+        duration: Math.max(5, Math.ceil(clipDuration)),
+        videoClips: [
+          {
+            id: `custom_v_${Date.now()}`,
+            name: file.name,
+            type: 'video',
+            proceduralType: 'cyberpunk_grid',
+            startTime: 0,
+            duration: clipDuration,
+            sourceStart: 0,
+            sourceDuration: clipDuration,
+            speed: 1.0,
+            colorGrading: createDefaultGrading(),
+            volume: 100,
+            videoUrl: videoUrl,
+            thumbnailUrl: isImage ? videoUrl : '/bg2.png',
+          },
+        ],
+        audioClips: [
+          {
+            id: `custom_a_${Date.now()}`,
+            name: 'Background Rhythm',
+            type: 'audio',
+            startTime: 0,
+            duration: Math.max(5, Math.ceil(clipDuration)),
+            sourceStart: 0,
+            volume: 75,
+            audioStyle: 'beat_loop',
+          },
+        ],
+        textClips: [
+          {
+            id: `custom_t_${Date.now()}`,
+            name: 'Title Overlay',
+            type: 'text',
+            startTime: 0.5,
+            duration: Math.min(5.0, clipDuration),
+            text: file.name.replace(/\.[^/.]+$/, '').toUpperCase(),
+            color: '#00ffea',
+            fontSize: 28,
+            positionY: 40,
+            style: 'neon',
+          },
+        ],
+        transitions: [],
+      };
+
+      setProjects((prev) => [newProject, ...prev]);
+      setActiveProjectId(newProject.id);
+      setActiveSidebarTab('editor');
+      setSelectedClip({ id: newProject.videoClips[0].id, type: 'video' });
+      setActiveWorkspaceTab('grading');
     };
 
-    setProjects([newProject, ...projects]);
-    setActiveProjectId(newProject.id);
-    setActiveSidebarTab('editor');
-    setSelectedClip({ id: newProject.videoClips[0].id, type: 'video' });
-    setActiveWorkspaceTab('grading');
+    if (!isImage) {
+      const tempVideo = document.createElement('video');
+      tempVideo.preload = 'metadata';
+      tempVideo.src = videoUrl;
+      tempVideo.onloadedmetadata = () => {
+        const dur = Number.isFinite(tempVideo.duration) && tempVideo.duration > 0 ? parseFloat(tempVideo.duration.toFixed(1)) : 15.0;
+        createAndSetProject(dur);
+      };
+      tempVideo.onerror = () => {
+        createAndSetProject(15.0);
+      };
+    } else {
+      createAndSetProject(6.0);
+    }
   };
 
   return (
@@ -986,45 +1005,60 @@ export default function App() {
 
                     {/* Quick actions for adding tracks overlayed on Canvas */}
                     <div className="flex flex-wrap items-center gap-2 bg-slate-950/50 p-2.5 rounded-2xl border border-slate-900/60 justify-between">
-                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider pl-1.5">Add Real Video</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider pl-1.5">Add Media:</span>
+                        <label className="px-2.5 py-1.5 bg-gradient-to-r from-cyan-600/30 via-indigo-600/30 to-purple-600/30 hover:from-cyan-600/50 hover:to-purple-600/50 border border-cyan-500/40 hover:border-cyan-300 text-[10px] font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 text-cyan-300 shadow-sm">
+                          <Plus className="w-3 h-3 text-cyan-400" />
+                          <span>Upload File</span>
+                          <input
+                            type="file"
+                            accept="video/*,image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) handleUploadVideoFile(file);
+                            }}
+                          />
+                        </label>
+                      </div>
+
                       <div className="flex flex-wrap items-center gap-1.5">
                         <button
                           onClick={() => handleAddVideoClip('vaporwave_sunset')}
                           className="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-850 hover:border-slate-700 text-[10px] font-bold rounded-lg transition-colors cursor-pointer flex items-center gap-1 text-orange-400"
                         >
                           <Plus className="w-2.5 h-2.5" />
-                          Roadtrip Vlog
+                          2.mp4
                         </button>
                         <button
                           onClick={() => handleAddVideoClip('cyberpunk_grid')}
                           className="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-850 hover:border-slate-700 text-[10px] font-bold rounded-lg transition-colors cursor-pointer flex items-center gap-1 text-pink-400"
                         >
                           <Plus className="w-2.5 h-2.5" />
-                          Amsterdam CGI
+                          1.mp4
                         </button>
                         <button
                           onClick={() => handleAddVideoClip('geometric_warp')}
                           className="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-850 hover:border-slate-700 text-[10px] font-bold rounded-lg transition-colors cursor-pointer flex items-center gap-1 text-emerald-400"
                         >
                           <Plus className="w-2.5 h-2.5" />
-                          Animated Showreel
+                          3.mp4
                         </button>
                         <button
                           onClick={() => handleAddVideoClip('nebula_ocean')}
                           className="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-850 hover:border-slate-700 text-[10px] font-bold rounded-lg transition-colors cursor-pointer flex items-center gap-1 text-cyan-400"
                         >
                           <Plus className="w-2.5 h-2.5" />
-                          Sintel Quest
+                          12.mp4
+                        </button>
+                        <button
+                          onClick={handleAddTextOverlay}
+                          className="px-3 py-1.5 bg-indigo-900/30 hover:bg-indigo-900/50 border border-indigo-800/40 hover:border-indigo-700 text-[10px] font-bold rounded-lg text-indigo-400 transition-colors cursor-pointer flex items-center gap-1"
+                        >
+                          <Type className="w-3 h-3" />
+                          <span>Caption</span>
                         </button>
                       </div>
-
-                      <button
-                        onClick={handleAddTextOverlay}
-                        className="px-3 py-1.5 bg-indigo-900/30 hover:bg-indigo-900/50 border border-indigo-800/40 hover:border-indigo-700 text-[10px] font-bold rounded-lg text-indigo-400 transition-colors cursor-pointer flex items-center gap-1"
-                      >
-                        <Type className="w-3 h-3" />
-                        <span>Caption</span>
-                      </button>
                     </div>
                   </div>
 

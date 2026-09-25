@@ -37,7 +37,9 @@ export default function PreviewPlayer({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   const lastTimeRef = useRef<number>(performance.now());
-  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const videoCacheRef = useRef<Map<string, HTMLVideoElement>>(new Map());
+  const imageCacheRef = useRef<Map<string, HTMLImageElement>>(new Map());
+  const lastRenderedCanvasRef = useRef<Map<string, HTMLCanvasElement>>(new Map());
 
   // 3D Preview Mode: '2d' | '3d_anaglyph' | '3d_cinema' | '3d_globe'
   const [preview3DMode, setPreview3DMode] = useState<'2d' | '3d_anaglyph' | '3d_cinema' | '3d_globe'>('2d');
@@ -58,101 +60,106 @@ export default function PreviewPlayer({
   const initialBrightnessRef = useRef<number>(0);
   const initialVolumeRef = useRef<number>(50);
 
-  // HTML5 Video Element Initialization
+  const isImageMedia = (url?: string): boolean => {
+    if (!url) return false;
+    return (
+      url.startsWith('data:image') ||
+      url.endsWith('.png') ||
+      url.endsWith('.jpg') ||
+      url.endsWith('.jpeg') ||
+      url.endsWith('.webp') ||
+      url.endsWith('.gif') ||
+      url.endsWith('.svg')
+    );
+  };
+
+  // Preload and cache all project media (videos and images)
   useEffect(() => {
-    const video = document.createElement('video');
-    video.crossOrigin = 'anonymous';
-    video.muted = false;
-    video.playsInline = true;
-    video.preload = 'auto';
-    videoRef.current = video;
+    project.videoClips.forEach((clip) => {
+      if (!clip.videoUrl) return;
 
-    // Trigger state refresh when video frames are loaded so canvas updates live
-    const handleTimeUpdate = () => {
-      drawFrame();
-    };
-    video.addEventListener('timeupdate', handleTimeUpdate);
-
-    return () => {
-      video.removeEventListener('timeupdate', handleTimeUpdate);
-      video.pause();
-      videoRef.current = null;
-    };
-  }, []);
+      if (isImageMedia(clip.videoUrl)) {
+        if (!imageCacheRef.current.has(clip.videoUrl)) {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.src = clip.videoUrl;
+          img.onload = () => {
+            drawFrame();
+          };
+          imageCacheRef.current.set(clip.videoUrl, img);
+        }
+      } else {
+        if (!videoCacheRef.current.has(clip.videoUrl)) {
+          const v = document.createElement('video');
+          v.crossOrigin = 'anonymous';
+          v.playsInline = true;
+          v.preload = 'auto';
+          v.src = clip.videoUrl;
+          v.addEventListener('timeupdate', () => drawFrame());
+          v.addEventListener('loadeddata', () => drawFrame());
+          v.addEventListener('seeked', () => drawFrame());
+          v.load();
+          videoCacheRef.current.set(clip.videoUrl, v);
+        }
+      }
+    });
+  }, [project.videoClips]);
 
   // Find active video clip
   const activeClipForSync = project.videoClips.find(
     (clip) => currentTime >= clip.startTime && currentTime < clip.startTime + clip.duration
   );
 
-  // 1. Sync Video Source only when the clip URL actually changes
+  // Synchronize playback speed, play/pause state and playhead across cached video elements
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
+    const activeVideo = activeClipForSync?.videoUrl && !isImageMedia(activeClipForSync.videoUrl)
+      ? videoCacheRef.current.get(activeClipForSync.videoUrl)
+      : null;
 
-    if (activeClipForSync && activeClipForSync.videoUrl) {
-      if (video.getAttribute('src') !== activeClipForSync.videoUrl) {
-        video.setAttribute('src', activeClipForSync.videoUrl);
-        video.load();
+    // Pause all non-active videos to prevent background audio or unnecessary CPU load
+    videoCacheRef.current.forEach((v, url) => {
+      if (url !== activeClipForSync?.videoUrl) {
+        if (!v.paused) v.pause();
+      }
+    });
+
+    if (!activeVideo || !activeClipForSync) return;
+
+    // Volume & Muting
+    const clipVol = activeClipForSync.volume !== undefined ? activeClipForSync.volume : 100;
+    const isMuted = mutedTracks.v1 || mutedTracks.a1 || globalVolume === 0;
+    activeVideo.volume = isMuted ? 0 : Math.max(0, Math.min(1, (globalVolume / 100) * (clipVol / 100)));
+    activeVideo.muted = isMuted;
+
+    // Speed Keyframing
+    const interpolatedSpeed = interpolateSpeedKeyframes(
+      activeClipForSync.speedKeyframes,
+      (currentTime - activeClipForSync.startTime) * activeClipForSync.speed,
+      activeClipForSync.speed
+    );
+
+    if (activeVideo.playbackRate !== interpolatedSpeed) {
+      activeVideo.playbackRate = interpolatedSpeed;
+    }
+
+    const localTime = (currentTime - activeClipForSync.startTime) * interpolatedSpeed;
+
+    if (isPlaying) {
+      if (activeVideo.paused) {
+        activeVideo.play().catch(() => {});
+      }
+      if (Math.abs(activeVideo.currentTime - localTime) > 0.35) {
+        activeVideo.currentTime = localTime;
       }
     } else {
-      video.removeAttribute('src');
-      video.load();
-    }
-  }, [activeClipForSync?.videoUrl]);
-
-  // Sync video volume
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    const clipVol = activeClipForSync?.volume !== undefined ? activeClipForSync.volume : 100;
-    const isMuted = mutedTracks.a1 || globalVolume === 0;
-    video.volume = isMuted ? 0 : Math.max(0, Math.min(1, (globalVolume / 100) * (clipVol / 100)));
-    video.muted = isMuted;
-  }, [globalVolume, activeClipForSync?.volume, mutedTracks.a1]);
-
-  // 2. Sync playback speed, play/pause state and playhead
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video || !video.src) return;
-
-    if (activeClipForSync && activeClipForSync.videoUrl) {
-      // Sync playback rate and resolve speed ramping
-      const interpolatedSpeed = interpolateSpeedKeyframes(
-        activeClipForSync.speedKeyframes,
-        (currentTime - activeClipForSync.startTime) * activeClipForSync.speed,
-        activeClipForSync.speed
-      );
-
-      if (video.playbackRate !== interpolatedSpeed) {
-        video.playbackRate = interpolatedSpeed;
+      if (!activeVideo.paused) {
+        activeVideo.pause();
       }
-
-      const localTime = (currentTime - activeClipForSync.startTime) * interpolatedSpeed;
-
-      if (isPlaying) {
-        if (video.paused) {
-          video.play().catch((err) => console.log('Video play error:', err));
-        }
-        // Only seek if drift is large (> 0.4 seconds) to avoid seek-stuttering
-        if (Math.abs(video.currentTime - localTime) > 0.4) {
-          video.currentTime = localTime;
-        }
-      } else {
-        if (!video.paused) {
-          video.pause();
-        }
-        // Seek precisely when paused
-        if (Math.abs(video.currentTime - localTime) > 0.05) {
-          video.currentTime = localTime;
-        }
-      }
-    } else {
-      if (!video.paused) {
-        video.pause();
+      if (Math.abs(activeVideo.currentTime - localTime) > 0.04) {
+        activeVideo.currentTime = localTime;
       }
     }
-  }, [activeClipForSync?.id, activeClipForSync?.speed, isPlaying, currentTime]);
+  }, [activeClipForSync?.id, activeClipForSync?.videoUrl, activeClipForSync?.speed, isPlaying, currentTime, globalVolume, mutedTracks]);
 
   // Synchronize audio playback with playing state and currentTime changes
   useEffect(() => {
@@ -444,74 +451,95 @@ export default function PreviewPlayer({
 
     const speedAtPlayhead = interpolateSpeedKeyframes(clip.speedKeyframes, currentTime - clip.startTime, clip.speed);
 
-    if (clip.videoUrl && videoRef.current && videoRef.current.readyState >= 2) {
-      // GPU-accelerated drawing filters for HTML5 Canvas!
-      const grading = gradedParams;
-      const b = 100 + grading.brightness;
-      const c = 100 + grading.contrast;
-      const sVal = 100 + grading.saturation;
-      
-      let customFilter = `brightness(${b}%) contrast(${c}%) saturate(${sVal}%)`;
-      if (grading.lut === 'monochrome') {
-        customFilter += ' grayscale(100%)';
-      } else if (grading.lut === 'vintage') {
-        customFilter += ' sepia(40%) hue-rotate(-10deg)';
-      } else if (grading.lut === 'cyberpunk') {
-        customFilter += ' saturate(170%) hue-rotate(50deg)';
-      } else if (grading.lut === 'teal_orange') {
-        customFilter += ' saturate(140%) contrast(110%) hue-rotate(-20deg)';
-      } else if (grading.lut === 'warm_gold') {
-        customFilter += ' sepia(20%) saturate(130%) hue-rotate(10deg)';
-      }
-      if (grading.motionBlur > 0) {
-        customFilter += ` blur(${grading.motionBlur * 0.1}px)`;
-      }
-      if (globalMotionBlur && speedAtPlayhead > 1.0) {
-        const globalBlurAmount = parseFloat(((speedAtPlayhead - 1.0) * 3.5).toFixed(1));
-        customFilter += ` blur(${globalBlurAmount}px)`;
-      }
-      oCtx.filter = customFilter;
+    // Color grading & visual adjustment filters
+    const grading = gradedParams;
+    const b = 100 + grading.brightness;
+    const c = 100 + grading.contrast;
+    const sVal = 100 + grading.saturation;
+    
+    let customFilter = `brightness(${b}%) contrast(${c}%) saturate(${sVal}%)`;
+    if (grading.lut === 'monochrome') {
+      customFilter += ' grayscale(100%)';
+    } else if (grading.lut === 'vintage') {
+      customFilter += ' sepia(40%) hue-rotate(-10deg)';
+    } else if (grading.lut === 'cyberpunk') {
+      customFilter += ' saturate(170%) hue-rotate(50deg)';
+    } else if (grading.lut === 'teal_orange') {
+      customFilter += ' saturate(140%) contrast(110%) hue-rotate(-20deg)';
+    } else if (grading.lut === 'warm_gold') {
+      customFilter += ' sepia(20%) saturate(130%) hue-rotate(10deg)';
+    }
+    if (grading.motionBlur > 0) {
+      customFilter += ` blur(${grading.motionBlur * 0.1}px)`;
+    }
+    if (globalMotionBlur && speedAtPlayhead > 1.0) {
+      const globalBlurAmount = parseFloat(((speedAtPlayhead - 1.0) * 3.5).toFixed(1));
+      customFilter += ` blur(${globalBlurAmount}px)`;
+    }
 
-      const vW = videoRef.current.videoWidth || 640;
-      const vH = videoRef.current.videoHeight || 360;
+    if (clip.videoUrl && isImageMedia(clip.videoUrl)) {
+      const img = imageCacheRef.current.get(clip.videoUrl);
+      if (img && img.complete && img.naturalWidth > 0) {
+        oCtx.filter = customFilter;
+        const iW = img.naturalWidth;
+        const iH = img.naturalHeight;
+        const sx = (cropX / 100) * iW;
+        const sy = (cropY / 100) * iH;
+        const sw = (cropW / 100) * iW;
+        const sh = (cropH / 100) * iH;
+        oCtx.drawImage(img, sx, sy, sw, sh, 0, 0, 640, 360);
+        oCtx.filter = 'none';
+      } else {
+        oCtx.fillStyle = '#04060f';
+        oCtx.fillRect(0, 0, 640, 360);
+      }
+    } else if (clip.videoUrl) {
+      const video = videoCacheRef.current.get(clip.videoUrl);
+      if (video && video.readyState >= 2) {
+        oCtx.filter = customFilter;
+        const vW = video.videoWidth || 640;
+        const vH = video.videoHeight || 360;
 
-      const sx = (cropX / 100) * vW;
-      const sy = (cropY / 100) * vH;
-      const sw = (cropW / 100) * vW;
-      const sh = (cropH / 100) * vH;
+        const sx = (cropX / 100) * vW;
+        const sy = (cropY / 100) * vH;
+        const sw = (cropW / 100) * vW;
+        const sh = (cropH / 100) * vH;
 
-      oCtx.drawImage(videoRef.current, sx, sy, sw, sh, 0, 0, 640, 360);
-      oCtx.filter = 'none';
+        oCtx.drawImage(video, sx, sy, sw, sh, 0, 0, 640, 360);
+        oCtx.filter = 'none';
+
+        // Cache last valid frame for this clip
+        let snap = lastRenderedCanvasRef.current.get(clip.id);
+        if (!snap) {
+          snap = document.createElement('canvas');
+          snap.width = 640;
+          snap.height = 360;
+          lastRenderedCanvasRef.current.set(clip.id, snap);
+        }
+        const snapCtx = snap.getContext('2d');
+        if (snapCtx) {
+          snapCtx.clearRect(0, 0, 640, 360);
+          snapCtx.drawImage(video, sx, sy, sw, sh, 0, 0, 640, 360);
+        }
+      } else if (lastRenderedCanvasRef.current.has(clip.id)) {
+        oCtx.filter = customFilter;
+        oCtx.drawImage(lastRenderedCanvasRef.current.get(clip.id)!, 0, 0, 640, 360);
+        oCtx.filter = 'none';
+      } else {
+        // Sleek dark placeholder showing only the selected video title — NEVER random procedural scenes
+        oCtx.fillStyle = '#050711';
+        oCtx.fillRect(0, 0, 640, 360);
+        oCtx.fillStyle = '#00ffea';
+        oCtx.font = 'bold 12px Inter, sans-serif';
+        oCtx.textAlign = 'center';
+        oCtx.fillText(`🎬 ${clip.name}`, 320, 172);
+        oCtx.fillStyle = '#64748b';
+        oCtx.font = '10px Inter, sans-serif';
+        oCtx.fillText('Loading media stream...', 320, 195);
+      }
     } else {
-      const tempCanvas = document.createElement('canvas');
-      tempCanvas.width = 640;
-      tempCanvas.height = 360;
-      const tCtx = tempCanvas.getContext('2d')!;
-
-      const grading = gradedParams;
-      let proceduralFilter = '';
-      if (grading.motionBlur > 0) {
-        proceduralFilter += `blur(${grading.motionBlur * 0.12}px)`;
-      }
-      if (globalMotionBlur && speedAtPlayhead > 1.0) {
-        const globalBlurAmount = parseFloat(((speedAtPlayhead - 1.0) * 3.5).toFixed(1));
-        proceduralFilter += ` blur(${globalBlurAmount}px)`;
-      }
-
-      if (proceduralFilter) {
-        tCtx.filter = proceduralFilter;
-      }
-      drawClipFrame(tCtx, clip.proceduralType, localTime, gradedParams);
-      if (proceduralFilter) {
-        tCtx.filter = 'none';
-      }
-
-      const sx = (cropX / 100) * 640;
-      const sy = (cropY / 100) * 360;
-      const sw = (cropW / 100) * 640;
-      const sh = (cropH / 100) * 360;
-
-      oCtx.drawImage(tempCanvas, sx, sy, sw, sh, 0, 0, 640, 360);
+      oCtx.fillStyle = '#050711';
+      oCtx.fillRect(0, 0, 640, 360);
     }
 
     // Apply Video Effects (VHS, Glitch, Cinema Glow, Film Grain, etc.)
@@ -548,6 +576,31 @@ export default function PreviewPlayer({
         oCtx.fillRect(0, 360 - barH, 640, barH);
       }
     }
+  };
+
+  const drawClipWithTransform = (
+    targetCtx: CanvasRenderingContext2D,
+    clip: VideoClip,
+    localTime: number,
+    gradedParams: any,
+    anim?: { opacity: number; scale: number; positionX: number; positionY: number; rotation?: number }
+  ) => {
+    targetCtx.save();
+    if (anim) {
+      targetCtx.globalAlpha = (anim.opacity !== undefined ? anim.opacity : 100) / 100;
+      const cx = 640 / 2;
+      const cy = 360 / 2;
+      const dx = (((anim.positionX !== undefined ? anim.positionX : 50) - 50) / 100) * 640;
+      const dy = (((anim.positionY !== undefined ? anim.positionY : 50) - 50) / 100) * 360;
+      const s = (anim.scale !== undefined ? anim.scale : 100) / 100;
+
+      targetCtx.translate(cx + dx, cy + dy);
+      if (anim.rotation) targetCtx.rotate((anim.rotation * Math.PI) / 180);
+      targetCtx.scale(s, s);
+      targetCtx.translate(-cx, -cy);
+    }
+    drawCroppedFrame(targetCtx, clip, localTime, gradedParams);
+    targetCtx.restore();
   };
 
   const drawFrame = () => {
@@ -591,11 +644,10 @@ export default function PreviewPlayer({
         const gradedFrom = { ...fromClip.colorGrading, brightness: fromClip.colorGrading.brightness + brightnessOverride };
         const gradedTo = { ...toClip.colorGrading, brightness: toClip.colorGrading.brightness + brightnessOverride };
 
-        // Relative timelines for procedural generator loops
+        // Relative timelines for clip frames
         const clipTimeFrom = (currentTime - fromClip.startTime) * fromClip.speed;
         const clipTimeTo = (currentTime - toClip.startTime) * toClip.speed;
 
-        // Interpolate anim properties for transitions
         const fromAnim = interpolateKeyframes(fromClip.keyframes, clipTimeFrom / fromClip.speed, {
           opacity: fromClip.opacity !== undefined ? fromClip.opacity : 100,
           scale: fromClip.scale !== undefined ? fromClip.scale : 100,
@@ -621,10 +673,11 @@ export default function PreviewPlayer({
           Math.max(0, Math.min(1, progress)),
           activeTransition.type,
           fromAnim,
-          toAnim
+          toAnim,
+          (ctxA) => drawClipWithTransform(ctxA, fromClip, clipTimeFrom, gradedFrom, fromAnim),
+          (ctxB) => drawClipWithTransform(ctxB, toClip, clipTimeTo, gradedTo, toAnim)
         );
       } else if (activeClip) {
-        // Fallback to active single clip with speed ramping
         const gradedParams = { ...activeClip.colorGrading, brightness: activeClip.colorGrading.brightness + brightnessOverride };
         const speedAtPlayhead = interpolateSpeedKeyframes(activeClip.speedKeyframes, currentTime - activeClip.startTime, activeClip.speed);
         const localTime = (currentTime - activeClip.startTime) * speedAtPlayhead;
@@ -636,21 +689,7 @@ export default function PreviewPlayer({
           positionY: activeClip.positionY !== undefined ? activeClip.positionY : 50,
         });
 
-        oCtx.save();
-        oCtx.globalAlpha = anim.opacity / 100;
-
-        const cx = 640 / 2;
-        const cy = 360 / 2;
-        const dx = ((anim.positionX - 50) / 100) * 640;
-        const dy = ((anim.positionY - 50) / 100) * 360;
-        const s = anim.scale / 100;
-
-        oCtx.translate(cx + dx, cy + dy);
-        oCtx.scale(s, s);
-        oCtx.translate(-cx, -cy);
-
-        drawCroppedFrame(oCtx, activeClip, localTime, gradedParams);
-        oCtx.restore();
+        drawClipWithTransform(oCtx, activeClip, localTime, gradedParams, anim);
       }
     } else if (activeClip) {
       // Normal clip rendering with speed ramping
@@ -665,32 +704,17 @@ export default function PreviewPlayer({
         positionY: activeClip.positionY !== undefined ? activeClip.positionY : 50,
       });
 
-      oCtx.save();
-      oCtx.globalAlpha = anim.opacity / 100;
-
-      const cx = 640 / 2;
-      const cy = 360 / 2;
-      const dx = ((anim.positionX - 50) / 100) * 640;
-      const dy = ((anim.positionY - 50) / 100) * 360;
-      const s = anim.scale / 100;
-
-      oCtx.translate(cx + dx, cy + dy);
-      oCtx.scale(s, s);
-      oCtx.translate(-cx, -cy);
-
-      drawCroppedFrame(oCtx, activeClip, localTime, gradedParams);
-      oCtx.restore();
+      drawClipWithTransform(oCtx, activeClip, localTime, gradedParams, anim);
     } else {
-      // Black frame
+      // Clean empty dark studio canvas
       oCtx.clearRect(0, 0, 640, 360);
-      oCtx.fillStyle = '#050508';
+      oCtx.fillStyle = '#04060f';
       oCtx.fillRect(0, 0, 640, 360);
 
-      // Simple instructional watermark inside empty frame
-      oCtx.font = '500 14px var(--font-sans)';
+      oCtx.font = '500 13px Inter, sans-serif';
       oCtx.fillStyle = '#475569';
       oCtx.textAlign = 'center';
-      oCtx.fillText('No video track active. Drag a clip here.', 640 / 2, 360 / 2);
+      oCtx.fillText('No video track active at this playhead position.', 640 / 2, 360 / 2);
     }
 
     // Apply the 3D Mode transformation and projection onto the visible context!

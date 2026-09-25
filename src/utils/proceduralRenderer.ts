@@ -605,7 +605,9 @@ export function drawTransitionFrame(
   progress: number,
   type: TransitionType,
   fromAnim?: { opacity: number; scale: number; positionX: number; positionY: number; rotation?: number },
-  toAnim?: { opacity: number; scale: number; positionX: number; positionY: number; rotation?: number }
+  toAnim?: { opacity: number; scale: number; positionX: number; positionY: number; rotation?: number },
+  customDrawA?: (ctxA: CanvasRenderingContext2D) => void,
+  customDrawB?: (ctxB: CanvasRenderingContext2D) => void
 ) {
   const w = ctx.canvas.width;
   const h = ctx.canvas.height;
@@ -620,37 +622,45 @@ export function drawTransitionFrame(
   canvasB.height = h;
   const ctxB = canvasB.getContext('2d')!;
 
-  if (fromAnim) {
-    ctxA.save();
-    ctxA.globalAlpha = fromAnim.opacity / 100;
-    const cx = w / 2;
-    const cy = h / 2;
-    const dx = ((fromAnim.positionX - 50) / 100) * w;
-    const dy = ((fromAnim.positionY - 50) / 100) * h;
-    const s = fromAnim.scale / 100;
-    ctxA.translate(cx + dx, cy + dy);
-    if (fromAnim.rotation) ctxA.rotate((fromAnim.rotation * Math.PI) / 180);
-    ctxA.scale(s, s);
-    ctxA.translate(-cx, -cy);
+  if (customDrawA) {
+    customDrawA(ctxA);
+  } else {
+    if (fromAnim) {
+      ctxA.save();
+      ctxA.globalAlpha = fromAnim.opacity / 100;
+      const cx = w / 2;
+      const cy = h / 2;
+      const dx = ((fromAnim.positionX - 50) / 100) * w;
+      const dy = ((fromAnim.positionY - 50) / 100) * h;
+      const s = fromAnim.scale / 100;
+      ctxA.translate(cx + dx, cy + dy);
+      if (fromAnim.rotation) ctxA.rotate((fromAnim.rotation * Math.PI) / 180);
+      ctxA.scale(s, s);
+      ctxA.translate(-cx, -cy);
+    }
+    drawClipFrame(ctxA, fromType, timeFrom, fromGrading);
+    if (fromAnim) ctxA.restore();
   }
-  drawClipFrame(ctxA, fromType, timeFrom, fromGrading);
-  if (fromAnim) ctxA.restore();
 
-  if (toAnim) {
-    ctxB.save();
-    ctxB.globalAlpha = toAnim.opacity / 100;
-    const cx = w / 2;
-    const cy = h / 2;
-    const dx = ((toAnim.positionX - 50) / 100) * w;
-    const dy = ((toAnim.positionY - 50) / 100) * h;
-    const s = toAnim.scale / 100;
-    ctxB.translate(cx + dx, cy + dy);
-    if (toAnim.rotation) ctxB.rotate((toAnim.rotation * Math.PI) / 180);
-    ctxB.scale(s, s);
-    ctxB.translate(-cx, -cy);
+  if (customDrawB) {
+    customDrawB(ctxB);
+  } else {
+    if (toAnim) {
+      ctxB.save();
+      ctxB.globalAlpha = toAnim.opacity / 100;
+      const cx = w / 2;
+      const cy = h / 2;
+      const dx = ((toAnim.positionX - 50) / 100) * w;
+      const dy = ((toAnim.positionY - 50) / 100) * h;
+      const s = toAnim.scale / 100;
+      ctxB.translate(cx + dx, cy + dy);
+      if (toAnim.rotation) ctxB.rotate((toAnim.rotation * Math.PI) / 180);
+      ctxB.scale(s, s);
+      ctxB.translate(-cx, -cy);
+    }
+    drawClipFrame(ctxB, toType, timeTo, toGrading);
+    if (toAnim) ctxB.restore();
   }
-  drawClipFrame(ctxB, toType, timeTo, toGrading);
-  if (toAnim) ctxB.restore();
 
   ctx.clearRect(0, 0, w, h);
 

@@ -24,7 +24,8 @@ import {
   Menu,
   X,
   Move,
-  Activity
+  Activity,
+  Wand2
 } from 'lucide-react';
 import { Project, VideoClip, AudioClip, TextClip, TimelineTransition, ProceduralType } from './types';
 import { projectPresets, createDefaultGrading } from './utils/projectPresets';
@@ -41,6 +42,7 @@ import AIMagicStudio from './components/AIMagicStudio';
 import AudioStudio from './components/AudioStudio';
 import MotionStudio from './components/MotionStudio';
 import ScopesMonitor from './components/ScopesMonitor';
+import CapCutEditorStudio from './components/CapCutEditorStudio';
 import { getAssetUrl } from './utils/assetUrl';
 
 export default function App() {
@@ -94,7 +96,7 @@ export default function App() {
 
   // UI state toggles
   const [showExportModal, setShowExportModal] = useState<boolean>(false);
-  const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<'grading' | 'inspector' | 'ai_magic' | 'audio' | 'motion' | 'scopes' | 'tutorials'>('grading');
+  const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<'capcut' | 'grading' | 'inspector' | 'ai_magic' | 'audio' | 'motion' | 'scopes' | 'tutorials'>('capcut');
 
   // Retrieve active project details
   const project = projects.find((p) => p.id === activeProjectId) || projects[0];
@@ -811,6 +813,22 @@ export default function App() {
                 <button
                   onClick={() => {
                     setActiveSidebarTab('editor');
+                    setActiveWorkspaceTab('capcut');
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer transition-all ${
+                    activeSidebarTab === 'editor' && activeWorkspaceTab === 'capcut'
+                      ? 'btn-sidebar-active'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-900/30'
+                  }`}
+                >
+                  <Wand2 className="w-4 h-4 text-cyan-400" />
+                  <span>CapCut Studio</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setActiveSidebarTab('editor');
                     setActiveWorkspaceTab('ai_magic');
                     setIsMobileMenuOpen(false);
                   }}
@@ -1039,6 +1057,21 @@ export default function App() {
             >
               <Layers className="w-4 h-4" />
               <span>Templates</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setActiveSidebarTab('editor');
+                setActiveWorkspaceTab('capcut');
+              }}
+              className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-2xl cursor-pointer transition-all ${
+                activeSidebarTab === 'editor' && activeWorkspaceTab === 'capcut'
+                  ? 'btn-sidebar-active'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900/40'
+              }`}
+            >
+              <Wand2 className="w-4 h-4 text-cyan-400" />
+              <span>CapCut Studio</span>
             </button>
 
             <button
@@ -1405,6 +1438,7 @@ export default function App() {
                   <div className="lg:col-span-5 flex flex-col bg-slate-900/30 border border-slate-800/60 rounded-2xl overflow-hidden shadow-lg backdrop-blur-md h-full min-h-[350px]">
                     <div className="flex border-b border-slate-900 bg-slate-950/60 p-1 shrink-0 overflow-x-auto no-scrollbar gap-1">
                       {[
+                        { id: 'capcut', label: 'CapCut Studio', icon: Wand2 },
                         { id: 'grading', label: 'Color', icon: Sliders },
                         { id: 'inspector', label: 'Inspector', icon: Settings },
                         { id: 'ai_magic', label: 'AI Magic', icon: Sparkles },
@@ -1432,7 +1466,62 @@ export default function App() {
                       })}
                     </div>
 
-                    <div className="flex-1 p-4 overflow-y-auto max-h-[360px] lg:max-h-[420px]">
+                    <div className="flex-1 p-3.5 overflow-y-auto max-h-[380px] lg:max-h-[440px]">
+                      {activeWorkspaceTab === 'capcut' && (
+                        <CapCutEditorStudio
+                          project={project}
+                          currentTime={currentTime}
+                          selectedClip={activeClipDetails}
+                          onUpdateVideoClip={(updated) => {
+                            const updatedList = project.videoClips.map((c) =>
+                              c.id === updated.id ? updated : c
+                            );
+                            updateVideoClips(updatedList);
+                          }}
+                          onUpdateAudioClip={(updated) => {
+                            const updatedList = project.audioClips.map((c) =>
+                              c.id === updated.id ? updated : c
+                            );
+                            updateAudioClips(updatedList);
+                          }}
+                          onUpdateTextClip={(updated) => {
+                            const updatedList = project.textClips.map((c) =>
+                              c.id === updated.id ? updated : c
+                            );
+                            updateTextClips(updatedList);
+                          }}
+                          onAddVideoClip={handleAddVideoClip}
+                          onAddAudioClip={(clip) => {
+                            const newAudio: AudioClip = {
+                              id: `audio_${Date.now()}`,
+                              ...clip
+                            };
+                            updateAudioClips([...project.audioClips, newAudio]);
+                          }}
+                          onAddTextClip={(text, anim = 'bounce', color = '#ffffff') => {
+                            const newText: TextClip = {
+                              id: `text_${Date.now()}`,
+                              name: text.slice(0, 20),
+                              type: 'text',
+                              text,
+                              style: 'regular',
+                              startTime: currentTime,
+                              duration: 4.0,
+                              fontSize: 28,
+                              color,
+                              animation: anim,
+                              positionY: 50
+                            };
+                            updateTextClips([...project.textClips, newText]);
+                          }}
+                          onUploadFile={handleUploadVideoFile}
+                          onSplitSelectedClip={handleSplitClip}
+                          onDeleteSelectedClip={handleDeleteClip}
+                          onDuplicateSelectedClip={handleDuplicateClip}
+                          onOpenExportModal={() => setShowExportModal(true)}
+                        />
+                      )}
+
                       {activeWorkspaceTab === 'grading' && (
                         <div className="animate-fade-in">
                           {selectedClip && selectedClip.type === 'video' && activeClipDetails ? (
